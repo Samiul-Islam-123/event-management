@@ -2,7 +2,7 @@ import React from "react";
 
 const Info = () => {
     return (
-        <section className=" w-full h-screen">
+        <section className=" w-full min-h-screen">
             <div className=" w-full h-[12vh] border-[#3D004D] border flex items-center justify-center">
                 <h1>Welcome everyone to Diane's outings</h1>
             </div>
