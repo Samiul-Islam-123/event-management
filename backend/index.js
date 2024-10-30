@@ -3,6 +3,7 @@ const ConnectToDatabase = require('./Database/Connection')
 const dotenv = require('dotenv');
 const cors = require('cors');
 const UserRouter = require('./routes/UserRoutes');
+const EventRouter = require('./routes/EventRoutes');
 
 const app = express();
 dotenv.config();
@@ -18,6 +19,7 @@ app.get('/', (req,res) => {
 })
 
 app.use('/user', UserRouter);
+app.use('/event', EventRouter)
 
 app.listen(PORT,async () => {
     console.log("Server is starting ...");
