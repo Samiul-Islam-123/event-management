@@ -1,4 +1,6 @@
 import React from "react";
+import img1 from '../assets/image1.jpg';
+import img2 from '../assets/image2.jpg';
 
 const Info = () => {
     return (
@@ -9,14 +11,18 @@ const Info = () => {
 
             <div className="  flex w-full justify-center h-[88vh] flex-wrap md:gap-32 items-center">
                 <div className=" md:w-[30vw] md:h-[30vw] w-[75vw] h-[75vw]  relative mt-12">
-                    <div className=" absolute z-20 top-0 left-0  border border-black rounded-[50px] md:w-[20vw] md:h-[20vw] w-[50vw] h-[50vw]"></div>
+                    <div className=" absolute z-20 top-0 left-0   rounded-[50px] md:w-[20vw] md:h-[20vw] w-[50vw] h-[50vw] overflow-hidden">
+                        <img src={img1} alt="" className=" object-cover h-full w-full"/>
+                    </div>
                     <div className=" absolute z-10 top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 border border-black rounded-[50px] md:w-[20vw] md:h-[20vw] w-[50vw] h-[50vw]"></div>
-                    <div className=" absolute z-20 bottom-0 right-0 border border-black rounded-[50px] md:w-[20vw] md:h-[20vw] w-[50vw] h-[50vw]"></div>
+                    <div className=" absolute z-30 bottom-0 right-0  rounded-[50px] md:w-[20vw] md:h-[20vw] w-[50vw] h-[50vw] overflow-hidden">
+                        <img src={img2} alt="" className=" object-cover h-full w-full"/>
+                    </div>
                 </div>
 
                 <div className="flex flex-col w-[80vw] md:w-[30vw]">
                     <div className=" mb-8 md:mb-14">
-                        <h1 className="text-4xl md:text-5xl font-semibold">We inspire </h1>
+                        <h1 className="text-4xl md:text-5xl font-semibold">We <span className=" text-[#E167FF]">inspire</span> </h1>
                         <h1 className="text-4xl md:text-5xl font-semibold">
                             people to go out more
                         </h1>

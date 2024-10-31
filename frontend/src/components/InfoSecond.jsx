@@ -1,4 +1,5 @@
 import React from "react";
+import img3 from '../assets/image3.jpg'
 
 const InfoSecond = () => {
     return (
@@ -11,7 +12,7 @@ const InfoSecond = () => {
                 <div className="flex flex-col w-[80vw] md:w-[30vw]">
                     <div className=" mb-8 md:mb-14 ">
                         <h1 className="text-4xl md:text-5xl font-semibold">
-                            Bringing people{" "}
+                            Bringing <span className=" text-[#E167FF]">people{" "}</span>
                         </h1>
                         <h1 className="text-4xl md:text-5xl font-semibold">
                             together
@@ -40,7 +41,9 @@ const InfoSecond = () => {
 
                 <div className=" md:w-[33vw] md:h-[12vw] w-[75vw] h-[48vw]  relative mt-12">
                     <div className=" absolute z-10 top-0 left-0  border border-black rounded-[50px] md:w-[30vw] md:h-[15vw] w-[70vw] h-[40vw]"></div>
-                    <div className=" absolute z-20 top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 border border-black rounded-[50px] md:w-[30vw] md:h-[15vw] w-[70vw] h-[40vw]"></div>
+                    <div className=" absolute z-20 top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2  rounded-[50px] md:w-[30vw] md:h-[15vw] w-[70vw] h-[40vw] overflow-hidden">
+                        <img src={img3} alt="" className=" object-cover h-full w-full"/>
+                    </div>
                     <div className=" absolute z-10 bottom-0 right-0 border border-black rounded-[50px] md:w-[30vw] md:h-[15vw] w-[70vw] h-[40vw]"></div>
                 </div>
             </div>

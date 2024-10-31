@@ -1,17 +1,36 @@
-import React from 'react'
+import React from "react";
+import img3 from '../../assets/image3.jpg';
 
 const EventCard = () => {
-  return (
-    <div className=' w-[15vw] h-[40vh] rounded-lg flex flex-col overflow-hidden'>
-        <div className=' w-full h-[45%] bg-slate-300'>
-            {/* img  */}
-        </div>
-        <h1>Special Sports Challenge</h1>
-        <p>A sports challenge event is all about pushing limits and celebrating....</p>
-        <div className='flex'></div>
-        <div className='flex'></div>
-    </div>
-  )
-}
+    return (
+        <div className=" w-[290px] h-[360px] rounded-lg flex flex-col overflow-hidden border border-black m-3 ">
+            <div className=" w-full h-[45%] bg-slate-300 overflow-hidden">
+              <img src={img3} alt="" className=" object-cover h-full w-full"/>
+            </div>
+            <div className=" p-3 flex flex-col justify-between flex-1">
+                <h1 className=" text-xl font-semibold">
+                    Special Sports Challenge
+                </h1>
+                <p className=" opacity-70">
+                    A sports challenge event is all about pushing limits and
+                    celebrating....
+                </p>
+                <div className="flex">
+                    <h1>.</h1>
+                    <p className=" font-semibold">Thu, 24th Jan 2024</p>
+                </div>
+                <div className="flex justify-between">
+                    <p className=" font-medium">
+                        Organized By <br /> <span className=" text-[#E167FF]">Organizer Name</span>
+                    </p>
 
-export default EventCard
+                    <button className=" px-5 py-2 bg-[#E167FF] rounded-xl text-white ">
+                        Buy Now
+                    </button>
+                </div>
+            </div>
+        </div>
+    );
+};
+
+export default EventCard;
