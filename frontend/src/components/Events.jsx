@@ -5,7 +5,7 @@ import { FaArrowRightLong } from "react-icons/fa6";
 const Events = () => {
   return (
     <section className=' w-full min-h-screen md:px-12 px-8'>
-        <div className=' w-full flex gap-6 flex-col items-center'>
+        <div className=' w-full flex gap-6 flex-col items-center qwigley-regular text-2xl text-[#3D004D]'>
             <h1>Events</h1>
             <h1 className="text-4xl md:text-5xl font-semibold">Grab Your <span className=" text-[#E167FF]">Seats</span></h1>
         </div>
@@ -40,8 +40,8 @@ const Events = () => {
               <EventCard /> 
               <EventCard /> 
 
-              <div className=' rounded-full h-24 w-24 border border-black mt-9 ml-9 flex flex-col justify-center items-center opacity-60 gap-1'>
-                <FaArrowRightLong />
+              <div className=' rounded-full h-24 w-24 border border-black mt-9 ml-9 flex flex-col gap-0 justify-center items-center opacity-60 gap-1 hover:scale-110 duration-500 transition-all ease-in-out' >
+                <FaArrowRightLong size={10} />
                 <p className=' text-sm '>See more</p>
               </div>
             </div>
