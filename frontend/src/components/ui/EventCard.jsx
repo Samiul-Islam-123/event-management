@@ -3,7 +3,7 @@ import img3 from '../../assets/image3.jpg';
 
 const EventCard = () => {
     return (
-        <div className=" w-[290px] h-[360px] rounded-lg flex flex-col overflow-hidden border border-black m-3 ">
+        <div className=" w-[290px] h-[360px] rounded-lg flex flex-col overflow-hidden border border-black m-3 shadow-lg shadow-gray-200 hover:shadow-gray-400 hover:scale-105 transition-all ease-in-out">
             <div className=" w-full h-[45%] bg-slate-300 overflow-hidden">
               <img src={img3} alt="" className=" object-cover h-full w-full"/>
             </div>
@@ -24,7 +24,7 @@ const EventCard = () => {
                         Organized By <br /> <span className=" text-[#E167FF]">Organizer Name</span>
                     </p>
 
-                    <button className=" px-5 py-2 bg-[#E167FF] rounded-xl text-white ">
+                    <button className=" px-5 py-2 bg-[#E167FF] hover:bg-[#3D004D] rounded-xl text-white transition-all ease-in-out ">
                         Buy Now
                     </button>
                 </div>

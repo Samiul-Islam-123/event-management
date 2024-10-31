@@ -14,7 +14,7 @@ function App() {
   return (
     <>
       <div className='main w-full overflow-clip'>
-        <Nav />
+        
         <Hero />
         <Info />
         <InfoSecond />

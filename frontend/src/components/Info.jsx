@@ -5,7 +5,7 @@ import img2 from '../assets/image2.jpg';
 const Info = () => {
     return (
         <section className=" w-full min-h-screen">
-            <div className=" w-full h-[12vh] border-[#3D004D] border flex items-center justify-center">
+            <div className=" w-full h-[12vh] border-[#3D004D] border flex items-center justify-center qwigley-regular text-2xl text-[#3D004D]">
                 <h1>Welcome everyone to Diane's outings</h1>
             </div>
 
