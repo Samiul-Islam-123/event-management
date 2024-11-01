@@ -73,6 +73,43 @@ EventRouter.get('/:id', async (req, res) => {
     }
 });
 
+
+EventRouter.get('/my-events/:userId', async (req, res) => {
+    const { userId } = req.params;
+
+    if (userId) {
+        try {
+            // Fetch events where the user is the organizer
+            const events = await EventModel.find({ organizer: userId })
+                .populate('organizer')
+                .populate('attendees');
+
+            if (events.length > 0) {
+                res.json({
+                    success: true,
+                    events // Return the list of events
+                });
+            } else {
+                res.json({
+                    success: false,
+                    message: "No events found for this organizer"
+                });
+            }
+        } catch (error) {
+            res.json({
+                success: false,
+                message: "Error fetching events",
+                error: error.message
+            });
+        }
+    } else {
+        res.json({
+            success: false,
+            message: "User ID required"
+        });
+    }
+});
+
 // Get All Events
 EventRouter.get('/', async (req, res) => {
     try {
@@ -89,6 +126,8 @@ EventRouter.get('/', async (req, res) => {
         });
     }
 });
+
+
 
 // Update Event by ID
 EventRouter.put('/:id', async (req, res) => {

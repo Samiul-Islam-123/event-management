@@ -7,6 +7,8 @@ import Nav from './components/Nav'
 import Info from './components/Info'
 import InfoSecond from './components/InfoSecond'
 import Events from './components/Events'
+import LandingPage from './pages/public/LandingPage'
+import RoutesManager from './RoutesManager'
 
 function App() {
   
@@ -15,10 +17,11 @@ function App() {
     <>
       <div className='main w-full overflow-clip'>
         
-        <Hero />
+        {/* <Hero />
         <Info />
         <InfoSecond />
-        <Events />
+        <Events /> */}
+        <RoutesManager />
       </div>
     </>
   )
