@@ -4,6 +4,7 @@ import EventCard from '../../components/ui/EventCard'; // Assuming we're using t
 import { useUser } from '@clerk/clerk-react';
 import CreateEventForm from '../../components/CreateEventForm';
 import Modal from '../../components/ui/Modal'; // Import the Modal component
+import Nav from '../../components/Nav';
 
 function ProfilePage() {
   const { user } = useUser();
@@ -42,6 +43,7 @@ function ProfilePage() {
 
   return (
     <div className="container mx-auto px-4 py-8">
+      <Nav />
       <div className="flex flex-col md:flex-row items-center md:items-start mb-8">
         <img 
           src={user.imageUrl} 

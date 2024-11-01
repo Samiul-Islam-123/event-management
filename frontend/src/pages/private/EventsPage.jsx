@@ -1,5 +1,6 @@
 import React, { useState } from 'react';
 import EventCard from '../../components/ui/EventCard';
+import Nav from '../../components/Nav';
 
 function EventsPage() {
   const [searchQuery, setSearchQuery] = useState('');
@@ -28,6 +29,7 @@ function EventsPage() {
 
   return (
     <div className="container mx-auto px-4 py-8">
+      <Nav />
       <h1 className="text-3xl font-bold mb-8">Events</h1>
       
       <form onSubmit={handleSearch} className="mb-8 flex gap-2">

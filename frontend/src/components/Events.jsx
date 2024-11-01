@@ -5,8 +5,8 @@ import { FaArrowRightLong } from "react-icons/fa6";
 const Events = () => {
   return (
     <section className=' w-full min-h-screen md:px-12 px-8'>
-        <div className=' w-full flex gap-6 flex-col items-center qwigley-regular text-2xl text-[#3D004D]'>
-            <h1>Events</h1>
+        <div className=' w-full flex gap-6 flex-col items-center   '>
+            <h1 className='text-2xl text-[#3D004D] md:text-5xl qwigley-regular'>Events</h1>
             <h1 className="text-4xl md:text-5xl font-semibold">Grab Your <span className=" text-[#E167FF]">Seats</span></h1>
         </div>
 

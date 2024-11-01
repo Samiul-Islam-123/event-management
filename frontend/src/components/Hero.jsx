@@ -12,7 +12,7 @@ const Hero = () => {
         <>
         
         <section className="w-full h-screen bg-black/60 relative">
-        <Nav />
+        
             <div className="absolute w-full h-full overflow-hidden">
                 <Carousel />
                     
