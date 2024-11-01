@@ -31,6 +31,13 @@ const EventSchema = new mongoose.Schema({
         type : mongoose.Schema.Types.ObjectId,
         ref : 'user'
     }],
+    poster : {
+        type : String
+    },
+    price : {
+        type : Number,
+        required : true
+    }
 }, { timestamps: true }); // Adds createdAt and updatedAt fields automatically
 
 const EventModel = mongoose.model("event", EventSchema);

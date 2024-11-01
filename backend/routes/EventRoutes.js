@@ -1,29 +1,77 @@
 const express = require('express');
 const EventModel = require('../Database/Models/EventModel');
+const upload = require('../config/multer');
 const EventRouter = express.Router();
+const cloudinary = require('../config/cloudinary');
 
-// Create Event
-EventRouter.post('/', async (req, res) => {
-    const { name, description, date, limit, location, organizer, attendees } = req.body;
+
+// Create Event with Poster Image
+EventRouter.post('/', upload.single('poster'), async (req, res) => {
+    const { name, description, date, limit, location, organizer, attendees, price } = req.body;
 
     if (name && description && date && location && organizer) {
         try {
-            const newEvent = new EventModel({
-                name,
-                description,
-                date,
-                limit,
-                location,
-                organizer,
-                attendees
-            });
+            let posterUrl = '';
 
-            await newEvent.save();
-            res.json({
-                success: true,
-                message: "Event created successfully",
-                event: newEvent
-            });
+            // Upload image to Cloudinary if poster is provided
+            if (req.file) {
+                console.log('file found')
+                const result = await cloudinary.uploader.upload_stream({
+                    resource_type: 'image',
+                    folder: 'event_posters',
+                },async (error, result) => {
+                    if (error) {
+                        throw new Error('Failed to upload image');
+                    }
+                    //console.log(result)
+                    posterUrl = result.secure_url;
+                    // Create new event with poster URL
+                    const newEvent = new EventModel({
+                        name,
+                        description,
+                        date,
+                        limit,
+                        location,
+                        organizer,
+                        attendees,
+                        poster: posterUrl,
+                        price : price
+                    });
+
+                    await newEvent.save();
+                    res.json({
+                        success: true,
+                        message: "Event created successfully",
+                        event: newEvent
+                    });
+                }).end(req.file.buffer);
+            }
+
+            else{   
+                return res.json({
+                    success : false,
+                    message : "Image is required"
+                })
+            }
+
+            // // Create new event with poster URL
+            // const newEvent = new EventModel({
+            //     name,
+            //     description,
+            //     date,
+            //     limit,
+            //     location,
+            //     organizer,
+            //     attendees,
+            //     poster: posterUrl
+            // });
+
+            // await newEvent.save();
+            // res.json({
+            //     success: true,
+            //     message: "Event created successfully",
+            //     event: newEvent
+            // });
         } catch (error) {
             res.json({
                 success: false,
@@ -46,7 +94,7 @@ EventRouter.get('/:id', async (req, res) => {
     if (id) {
         try {
             const event = await EventModel.findById(id).populate('organizer').populate('attendees');
-            
+
             if (event) {
                 res.json({
                     success: true,
