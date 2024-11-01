@@ -11,7 +11,7 @@ import Hero4 from "../../assets/Carousel/4.png";
 
 const Carousel = () => {
 
-    const slides = [Hero1,Hero2,Hero3,Hero4];
+    const slides = [Hero4,Hero2,Hero3,Hero1];
     const [curr, setCurr] = useState(0);
     const next = ()=>{
         setCurr((curr) => (curr === slides.length - 1? 0 : curr + 1));

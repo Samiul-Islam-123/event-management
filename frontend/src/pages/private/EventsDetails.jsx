@@ -1,8 +1,28 @@
-import React from 'react'
+import React, { useEffect, useState } from 'react'
 import Nav from '../../components/Nav'
 import img from '../../assets/image3.jpg'
+import { useParams } from 'react-router-dom'
+import axios from 'axios'
 
 const EventsDetails = () => {
+
+    const {eventID} = useParams();
+    const [details, setDetails] = useState(null);
+
+    const fetchEventDetails = async() => {
+        const response = await axios.get(`${import.meta.env.VITE_API_URL}/event/${eventID}`);
+        if(response.data.success === true){
+            setDetails(response.data.event)
+        }
+
+        else
+        alert(response.data.message)
+    }
+
+    useEffect(() => {
+        fetchEventDetails()
+    },[])
+
     return (
         <section className=' w-screen min-h-screen '>
             <Nav />

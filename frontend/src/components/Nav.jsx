@@ -28,12 +28,20 @@ const Nav = () => {
         <nav
             ref={navRef}
             className="nav  w-full z-40 text-white bg-black/30 h-[8vh] flex justify-between items-center md:px-12 px-8 fixed top-0 left-0">
-            <div className="logo qwigley-regular text-2xl md:text-4xl">
+            <div onClick={() => {
+                navigate('/');
+            }} className="logo qwigley-regular text-2xl md:text-4xl" style={{
+                cursor : "pointer"
+            }}>
                 <h2>Les sorties de Diane</h2>
             </div>
 
             <ul className="flex gap-10 font-semibold text-lg">
-                <li>Home</li>
+                <li style={{
+                    cursor : "pointer"
+                }} onClick={() => {
+                navigate('/');
+            }}>Home</li>
                 <li className="events relative inline-block">
                     <button className="text-white focus:outline-none flex gap-1 items-center">
                         Events <RiArrowDropDownLine size={26} />

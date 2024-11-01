@@ -9,11 +9,9 @@ const key = `pk_test_ZnVuLXRvbWNhdC00Mi5jbGVyay5hY2NvdW50cy5kZXYk`;
 console.log(key)
 
 createRoot(document.getElementById('root')).render(
-  <StrictMode>
     <BrowserRouter>
     <ClerkProvider  publishableKey={key}>
     <App />
     </ClerkProvider>
     </BrowserRouter>
-  </StrictMode>,
 )

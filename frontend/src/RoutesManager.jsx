@@ -81,7 +81,7 @@ function RoutesManager() {
       {/* Protected Routes */}
       <Route path="/app/events" element={isSignedIn ? <EventsPage /> : <Navigate to="/login" />} />
       <Route path="/app/profile" element={isSignedIn ? <ProfilePage /> : <Navigate to="/login" />} />
-      <Route path="/app/eventDetails" element={isSignedIn ? <EventsDetails /> : <Navigate to="/login" />} />
+      <Route path="/app/eventDetails/:eventID" element={isSignedIn ? <EventsDetails /> : <Navigate to="/login" />} />
 
       {/* Catch-all Route */}
       <Route path="*" element={<Navigate to="/" />} />
