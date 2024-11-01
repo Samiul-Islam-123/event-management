@@ -10,6 +10,7 @@ import ProfilePage from './pages/private/ProfilePage';
 import LoginPage from './pages/auth/LoginPage';
 import SignupPage from './pages/auth/SignupPage';
 import { FullScreenLoader } from './components/FullScreenLoader';
+import EventsDetails from './pages/private/EventsDetails';
 
 function RoutesManager() {
   const { isSignedIn, isLoaded, user } = useUser(); // Get the user object for additional info
@@ -80,6 +81,7 @@ function RoutesManager() {
       {/* Protected Routes */}
       <Route path="/app/events" element={isSignedIn ? <EventsPage /> : <Navigate to="/login" />} />
       <Route path="/app/profile" element={isSignedIn ? <ProfilePage /> : <Navigate to="/login" />} />
+      <Route path="/app/eventDetails" element={isSignedIn ? <EventsDetails /> : <Navigate to="/login" />} />
 
       {/* Catch-all Route */}
       <Route path="*" element={<Navigate to="/" />} />

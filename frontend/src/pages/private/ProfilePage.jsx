@@ -42,20 +42,20 @@ function ProfilePage() {
   }, [user.id]); // Fetch bought tickets whenever user.id changes
 
   return (
-    <div className="container mx-auto px-4 py-8">
+    <div className="container overflow-clip w-screen mx-auto px-4 py-8 pt-[15vh] ">
       <Nav />
-      <div className="flex flex-col md:flex-row items-center md:items-start mb-8">
+      <div className="flex flex-col md:flex-col md:justify-center items-center md:items-center  mb-8">
         <img 
           src={user.imageUrl} 
           alt={user.fullName} 
-          className="w-32 h-32 rounded-full object-cover mb-4 md:mb-0 md:mr-8"
+          className="w-32 h-32 rounded-full object-cover mb-4 "
         />
-        <div>
+        <div className=' flex flex-col items-center'>
           <h1 className="text-3xl font-bold mb-2">{user.fullName}</h1>
           <p className="text-gray-600 mb-1">{user.emailAddresses[0].emailAddress}</p>
           <button 
             onClick={() => setIsCreatingEvent(true)} // Show the CreateEventForm form
-            className="px-4 py-2 bg-purple-600 text-white rounded-lg hover:bg-purple-700 focus:outline-none focus:ring-2 focus:ring-purple-500 focus:ring-offset-2"
+            className="px-4 py-2 mt-2 bg-purple-600 text-white rounded-lg hover:bg-purple-700 focus:outline-none focus:ring-2 focus:ring-purple-500 focus:ring-offset-2"
           >
             Create New Event
           </button>
@@ -69,7 +69,7 @@ function ProfilePage() {
 
       <div className="mb-8">
         <h2 className="text-2xl font-semibold mb-4">Events Created by Me</h2>
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+        <div className="flex flex-wrap gap-6 gap-6">
         {Array.isArray(createdEvents) && createdEvents.length > 0 ? (
         createdEvents.map(event => (
             <EventCard key={event.id} {...event} />
@@ -82,7 +82,7 @@ function ProfilePage() {
 
       <div>
         <h2 className="text-2xl font-semibold mb-4">Tickets Bought</h2>
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+        <div className="flex flex-wrap gap-6">
           {boughtTickets.map(ticket => (
             <EventCard key={ticket.id} {...ticket} />
           ))}

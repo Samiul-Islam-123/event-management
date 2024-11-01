@@ -1,6 +1,7 @@
 import React, { useState } from 'react';
 import EventCard from '../../components/ui/EventCard';
 import Nav from '../../components/Nav';
+import img from '../../assets/eventPage.jpg'
 
 function EventsPage() {
   const [searchQuery, setSearchQuery] = useState('');
@@ -28,9 +29,12 @@ function EventsPage() {
   };
 
   return (
-    <div className="container mx-auto px-4 py-8">
+    <div className="container mx-auto px-4 py-8 pt-[30vh] md:pt-[45vh]">
       <Nav />
-      <h1 className="text-3xl font-bold mb-8">Events</h1>
+      <div className='absolute top-0  left-0 flex justify-center items-center w-full md:h-[40vh] h-[25vh] bg-black'>
+        <img src={img} className=' absolute top-0 left-0 w-full h-full object-cover object-center opacity-65' alt="" />
+        <h1 className='qwigley-regular text-8xl md:text-8xl z-10 text-white font-bold'>Events</h1>
+      </div>
       
       <form onSubmit={handleSearch} className="mb-8 flex gap-2">
         <input
@@ -74,7 +78,7 @@ function EventsPage() {
         </button>
       </div>
 
-      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+      <div className="flex flex-wrap gap-6">
         {activeTab === 'upcoming' && upcomingEvents.map(event => (
           <EventCard key={event.id} {...event} />
         ))}

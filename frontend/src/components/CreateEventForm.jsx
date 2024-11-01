@@ -93,7 +93,7 @@ function CreateEventForm({ onCancel }) { // Accept user as a prop
             name="name"
             value={formData.name}
             onChange={handleChange}
-            className="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-purple-500 focus:ring focus:ring-purple-500 focus:ring-opacity-50"
+            className="mt-1 block w-full rounded-md border-gray-200 border shadow-sm focus:border-purple-500 focus:ring focus:ring-purple-500 focus:ring-opacity-50"
           />
           {errors.name && <p className="mt-2 text-sm text-red-600">{errors.name}</p>}
         </div>
@@ -106,7 +106,7 @@ function CreateEventForm({ onCancel }) { // Accept user as a prop
             rows="3"
             value={formData.description}
             onChange={handleChange}
-            className="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-purple-500 focus:ring focus:ring-purple-500 focus:ring-opacity-50"
+            className="mt-1 block w-full rounded-md border-gray-200 border shadow-sm focus:border-purple-500 focus:ring focus:ring-purple-500 focus:ring-opacity-50"
           ></textarea>
           {errors.description && <p className="mt-2 text-sm text-red-600">{errors.description}</p>}
         </div>
@@ -119,7 +119,7 @@ function CreateEventForm({ onCancel }) { // Accept user as a prop
             name="date"
             value={formData.date}
             onChange={handleChange}
-            className="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-purple-500 focus:ring focus:ring-purple-500 focus:ring-opacity-50"
+            className="mt-1 block w-full rounded-md border-gray-200 border shadow-sm focus:border-purple-500 focus:ring focus:ring-purple-500 focus:ring-opacity-50"
           />
           {errors.date && <p className="mt-2 text-sm text-red-600">{errors.date}</p>}
         </div>
@@ -133,7 +133,7 @@ function CreateEventForm({ onCancel }) { // Accept user as a prop
             value={formData.limit}
             onChange={handleChange}
             min="1"
-            className="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-purple-500 focus:ring focus:ring-purple-500 focus:ring-opacity-50"
+            className="mt-1 block w-full rounded-md border-gray-200 border shadow-sm focus:border-purple-500 focus:ring focus:ring-purple-500 focus:ring-opacity-50"
           />
           {errors.limit && <p className="mt-2 text-sm text-red-600">{errors.limit}</p>}
         </div>
@@ -146,7 +146,7 @@ function CreateEventForm({ onCancel }) { // Accept user as a prop
             name="location"
             value={formData.location}
             onChange={handleChange}
-            className="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-purple-500 focus:ring focus:ring-purple-500 focus:ring-opacity-50"
+            className="mt-1 block w-full rounded-md border-gray-200 border shadow-sm focus:border-purple-500 focus:ring focus:ring-purple-500 focus:ring-opacity-50"
           />
           {errors.location && <p className="mt-2 text-sm text-red-600">{errors.location}</p>}
         </div>
@@ -161,7 +161,7 @@ function CreateEventForm({ onCancel }) { // Accept user as a prop
           <button
             type="button"
             onClick={handleCancel}
-            className="w-full px-4 py-2 border border-gray-300 text-gray-700 rounded-md hover:bg-gray-100 focus:outline-none focus:ring-2 focus:ring-gray-300 focus:ring-offset-2"
+            className="w-full px-4 py-2 border border-gray-200 border text-gray-700 rounded-md hover:bg-gray-100 focus:outline-none focus:ring-2 focus:ring-gray-300 focus:ring-offset-2"
           >
             Cancel
           </button>

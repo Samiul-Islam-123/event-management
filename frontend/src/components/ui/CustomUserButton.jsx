@@ -27,7 +27,14 @@ function CustomUserButton() {
 
   return (
     <div className="relative" onMouseEnter={handleMouseEnter} onMouseLeave={handleMouseLeave}>
-      <UserButton afterSignOutUrl="/" />
+      <UserButton appearance={{
+    elements: {
+      userButtonAvatarBox: {
+        width: 40,
+        height: 40,
+      },
+    },
+  }} afterSignOutUrl="/" />
       
       {isOpen && (
         <div className="absolute right-0 mt-2 w-48 bg-white rounded-md shadow-lg z-10">
