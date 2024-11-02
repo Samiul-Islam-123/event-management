@@ -1,11 +1,14 @@
 import React, { useState } from 'react';
 import axios from 'axios';
 import { useUser } from '@clerk/clerk-react';
+import { useFormData } from '../context/FormDataContext';
 
 function CreateEventForm({ onCancel }) {
-  
+
   const { user } = useUser();
-  
+  const { saveFormData } = useFormData();
+
+
   const [formData, setFormData] = useState({
     name: '',
     description: '',
@@ -13,6 +16,7 @@ function CreateEventForm({ onCancel }) {
     limit: '',
     location: '',
     price: '', // New state for ticket price
+    posterURL : '',
     organizer: localStorage.getItem('user_id').toString() || '' // Setting organizer to user ID from Clerk
   });
 
@@ -49,21 +53,56 @@ function CreateEventForm({ onCancel }) {
     if (Object.keys(newErrors).length > 0) {
       setErrors(newErrors);
     } else {
+      console.log('poster////')
       const formDataObj = new FormData();
       Object.keys(formData).forEach((key) => {
         formDataObj.append(key, formData[key]);
       });
       if (poster) {
-        formDataObj.append('poster', poster); // Append the image file
+        console.log('poster found..............')
+
+        const posterData = new FormData();
+        posterData.append('poster', poster);
+        console.log("Uploading image....")
+        const PosterResponse = await axios.post(`${import.meta.env.VITE_API_URL}/event/poster`, posterData);
+        console.log(PosterResponse)
+        if (PosterResponse.data.success === true) {
+          console.log(PosterResponse.data.url);
+          setFormData((prevData) => ({
+              ...prevData,
+              posterURL: PosterResponse.data.url  // Corrected: using "posterURL" as a string key
+          }));
+          
+          // Store the updated formData in session storage
+          sessionStorage.setItem("formData", JSON.stringify({
+              ...formData,
+              posterURL: PosterResponse.data.url
+          }));
+          
+          //console.log(formData);
+      }
+      
+
+        else
+        alert(PosterResponse.data.message)
       }
 
+      else
+      return alert("A poster image is required")
+
+
       try {
-        const response = await axios.post(`${import.meta.env.VITE_API_URL}/event`, formDataObj, {
-          headers: { 'Content-Type': 'multipart/form-data' }
+
+
+        const response = await axios.post(`${import.meta.env.VITE_API_URL}/payment/checkout-session`, {
+          price: 20,//$20 for creating event
+          name: formData.name
+        }, {
+          headers: { 'Content-Type': 'application/json' }
         });
 
-        console.log(response)
-        
+        console.log(response);
+
         setFormData({
           name: '',
           description: '',
@@ -75,19 +114,20 @@ function CreateEventForm({ onCancel }) {
         });
         setPoster(null); // Reset the file input
         setErrors({});
-        if(response.data.success === true){
-          alert('Event created successfully!');
-          window.location.reload();
+
+        if (response.data.success === true) {
+          window.location.href = response.data.url;
+        } else {
+          alert(response.data.message);
         }
-        else
-          alert("Something went wrong :(");
-        onCancel(); 
+        onCancel();
       } catch (error) {
         console.error('Error creating event:', error);
         alert('Failed to create event. Please try again.');
       }
     }
   };
+
 
   const handleCancel = () => {
     setFormData({
@@ -97,18 +137,18 @@ function CreateEventForm({ onCancel }) {
       limit: '',
       location: '',
       price: '', // Reset ticket price
-      organizer: user.id || '' 
+      organizer: user.id || ''
     });
     setPoster(null); // Reset poster image
     setErrors({});
-    onCancel(); 
+    onCancel();
   };
 
   return (
     <div className="container mx-auto px-4 py-8">
-      <h1 className="text-3xl font-bold mb-8">Create New Event</h1>
+      <h1 className="text-3xl font-bold mb-8">Create New Event (for $20)</h1>
       <form onSubmit={handleSubmit} className="max-w-2xl mx-auto">
-        
+
         <div className="mb-4">
           <label htmlFor="name" className="block text-sm font-medium text-gray-700">Event Name</label>
           <input
@@ -209,7 +249,7 @@ function CreateEventForm({ onCancel }) {
             type="submit"
             className="w-full px-4 py-2 bg-purple-600 text-white rounded-md hover:bg-purple-700 focus:outline-none focus:ring-2 focus:ring-purple-500 focus:ring-offset-2"
           >
-            Create Event
+            Proceed to payment
           </button>
           <button
             type="button"

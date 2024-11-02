@@ -84,13 +84,15 @@ function EventsPage() {
        {/* Separation line between search results and upcoming events */}
     {searchResults.length > 0 && <hr className="my-8 border-gray-300" />}
 
-      <div className="flex flex-wrap gap-6">
-        {upcomingEvents && (
-          upcomingEvents.map(event => (
-            <EventCard key={event.id} {...event} />
-          ))
-        )}
-      </div>
+    <div className="flex flex-wrap gap-6">
+  {upcomingEvents &&
+    upcomingEvents
+      .sort((a, b) => new Date(a.date) - new Date(b.date)) // Sort by date
+      .map(event => (
+        <EventCard key={event.id} {...event} />
+      ))
+  }
+</div>
     </div>
   );
 }

@@ -12,6 +12,8 @@ import SignupPage from './pages/auth/SignupPage';
 import { FullScreenLoader } from './components/FullScreenLoader';
 import EventsDetails from './pages/private/EventsDetails';
 import Cookies from "js-cookie"
+import SuccessPage from './pages/payment/SuccessPage';
+import CancelPage from './pages/payment/CancelPage';
 
 function RoutesManager() {
   const { isSignedIn, isLoaded, user } = useUser(); // Get the user object for additional info
@@ -86,7 +88,11 @@ function RoutesManager() {
       <Route path="/app/eventDetails/:eventID" element={isSignedIn ? <EventsDetails /> : <Navigate to="/login" />} />
 
       {/* Catch-all Route */}
-      <Route path="*" element={<Navigate to="/" />} />
+      <Route path="/success" element={<SuccessPage />} />
+      <Route path="/cancel" element={<CancelPage />} />
+      
+
+      {/* <Route path="*" element={<Navigate to="/" />} /> */}
     </Routes>
   );
 }
