@@ -4,55 +4,93 @@ const upload = require('../config/multer');
 const EventRouter = express.Router();
 const cloudinary = require('../config/cloudinary');
 
+const stripe = require('stripe')(process.env.STRIPE_SECRET_KEY);
+
+// Route to create payment intent
+EventRouter.post('/create-payment-intent', async (req, res) => {
+    const { amount } = req.body; // Amount should be passed from the frontend
+
+    try {
+        const paymentIntent = await stripe.paymentIntents.create({
+            amount, // Amount in the smallest currency unit (e.g., cents)
+            currency: 'usd',
+            payment_method_types: ['card'],
+        });
+
+        res.json({
+            clientSecret: paymentIntent.client_secret,
+        });
+    } catch (error) {
+        res.status(500).json({ error: error.message });
+    }
+});
+
+EventRouter.post('/poster',upload.single('poster'), async(req,res) => {
+    if (req.file) {
+        //console.log('file found');
+        const result = await cloudinary.uploader.upload_stream({
+            resource_type: 'image',
+            folder: 'event_posters',
+        }, async (error, result) => {
+            if (error) {
+                throw new Error('Failed to upload image');
+            }
+            // Get the secure URL from Cloudinary
+            posterUrl = result.secure_url;
+            res.json({
+                success: true,
+                message: "Poster Uploaded successfully",
+                url : posterUrl
+            });
+        }).end(req.file.buffer);
+    } else {
+        return res.json({
+            success: false,
+            message: "Image is required"
+        });
+    }
+})
 
 // Create Event with Poster Image
-EventRouter.post('/', upload.single('poster'), async (req, res) => {
-    const { name, description, date, limit, location, organizer, attendees, price } = req.body;
+EventRouter.post('/', async (req, res) => {
+    const { name, description, date, limit, location, organizer, attendees, price, posterURL } = req.body;
 
     if (name && description && date && location && organizer) {
         try {
-            let posterUrl = '';
+            // Check for existing event to prevent duplicates
+            const existingEvent = await EventModel.findOne({
+                name,
+                date,
+                organizer
+            });
 
-            // Upload image to Cloudinary if poster is provided
-            if (req.file) {
-                console.log('file found')
-                const result = await cloudinary.uploader.upload_stream({
-                    resource_type: 'image',
-                    folder: 'event_posters',
-                },async (error, result) => {
-                    if (error) {
-                        throw new Error('Failed to upload image');
-                    }
-                    //console.log(result)
-                    posterUrl = result.secure_url;
-                    // Create new event with poster URL
-                    const newEvent = new EventModel({
-                        name,
-                        description,
-                        date,
-                        limit,
-                        location,
-                        organizer,
-                        attendees,
-                        poster: posterUrl,
-                        price : price
-                    });
-
-                    await newEvent.save();
-                    res.json({
-                        success: true,
-                        message: "Event created successfully",
-                        event: newEvent
-                    });
-                }).end(req.file.buffer);
-            }
-
-            else{   
+            if (existingEvent) {
                 return res.json({
-                    success : false,
-                    message : "Image is required"
-                })
+                    success: false,
+                    message: 'Event already exists with the same name, date, and organizer.'
+                });
             }
+
+
+            // Create new event with poster URL
+            const newEvent = new EventModel({
+                name,
+                description,
+                date,
+                limit,
+                location,
+                organizer,
+                attendees,
+                poster: posterURL,
+                price
+            });
+
+            await newEvent.save();
+            res.json({
+                success: true,
+                message: "Event created successfully",
+                event: newEvent
+            });
 
         } catch (error) {
             res.json({
