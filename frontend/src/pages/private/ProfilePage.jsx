@@ -5,6 +5,7 @@ import { useUser } from '@clerk/clerk-react';
 import CreateEventForm from '../../components/CreateEventForm';
 import Modal from '../../components/ui/Modal'; // Import the Modal component
 import Nav from '../../components/Nav';
+import Cookies from "js-cookie"
 
 function ProfilePage() {
   const { user } = useUser();
@@ -16,7 +17,7 @@ function ProfilePage() {
   useEffect(() => {
     const fetchCreatedEvents = async () => {
       try {
-        const response = await axios.get(`${import.meta.env.VITE_API_URL}/event/my-events/${localStorage.getItem('user_id').toString()}`);
+        const response = await axios.get(`${import.meta.env.VITE_API_URL}/event/my-events/${Cookies.get('user_id')}`);
         console.log(response)
         setCreatedEvents(response.data.events); // Update state with the fetched events
       } catch (error) {

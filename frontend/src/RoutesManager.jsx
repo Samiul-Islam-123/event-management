@@ -11,6 +11,7 @@ import LoginPage from './pages/auth/LoginPage';
 import SignupPage from './pages/auth/SignupPage';
 import { FullScreenLoader } from './components/FullScreenLoader';
 import EventsDetails from './pages/private/EventsDetails';
+import Cookies from "js-cookie"
 
 function RoutesManager() {
   const { isSignedIn, isLoaded, user } = useUser(); // Get the user object for additional info
@@ -44,6 +45,7 @@ function RoutesManager() {
         sendUserDataToServer(user);
       } else {
         localStorage.setItem('user_id',response.data.user._id)
+        Cookies.set('user_id', response.data.user._id)
         console.log('User already exists, no need to save:', response.data.user);
       }
     } catch (error) {

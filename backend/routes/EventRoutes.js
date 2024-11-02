@@ -54,24 +54,6 @@ EventRouter.post('/', upload.single('poster'), async (req, res) => {
                 })
             }
 
-            // // Create new event with poster URL
-            // const newEvent = new EventModel({
-            //     name,
-            //     description,
-            //     date,
-            //     limit,
-            //     location,
-            //     organizer,
-            //     attendees,
-            //     poster: posterUrl
-            // });
-
-            // await newEvent.save();
-            // res.json({
-            //     success: true,
-            //     message: "Event created successfully",
-            //     event: newEvent
-            // });
         } catch (error) {
             res.json({
                 success: false,
