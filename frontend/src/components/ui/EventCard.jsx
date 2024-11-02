@@ -1,5 +1,7 @@
 import React from "react";
 import img3 from '../../assets/image3.jpg';
+import { CiCalendar } from "react-icons/ci";
+
 
 const EventCard = () => {
     return (
@@ -15,8 +17,8 @@ const EventCard = () => {
                     A sports challenge event is all about pushing limits and
                     celebrating....
                 </p>
-                <div className="flex">
-                    <h1>.</h1>
+                <div className="flex items-center gap-2">
+                    <CiCalendar size={20} />
                     <p className=" font-semibold">Thu, 24th Jan 2024</p>
                 </div>
                 <div className="flex justify-between">
