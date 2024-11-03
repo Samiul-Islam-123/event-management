@@ -4,6 +4,7 @@ import Info from '../../components/Info'
 import InfoSecond from '../../components/InfoSecond'
 import Events from '../../components/Events'
 import Nav from '../../components/Nav'
+import Footer from '../../components/Footer'
 
 function LandingPage() {
   return (
@@ -13,6 +14,7 @@ function LandingPage() {
       <Info />
       <InfoSecond />
       <Events />
+      <Footer />
     </>
   )
 }
