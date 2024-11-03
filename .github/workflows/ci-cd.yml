@@ -16,6 +16,7 @@ jobs:
       - name: Stop PM2
         run: |
           pm2 stop all || true  # Stop all running PM2 processes
+          pm2 delete all
 
       - name: Install Backend Dependencies
         run: |
@@ -31,7 +32,7 @@ jobs:
       - name: Deploy Frontend
         run: |
           cd frontend/dist
-          pm2 start serve -s .
+          pm2 start serve --name my-static-server -- -s .
 
       - name: deploy backend
         run: |
