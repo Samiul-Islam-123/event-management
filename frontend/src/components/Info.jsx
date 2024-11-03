@@ -32,7 +32,7 @@ const Info = () => {
                     start: "top center",
                     end: "60% center",
                     scrub: 5,
-                    markers: true
+                    
                 },
             }
         );
@@ -57,7 +57,7 @@ const Info = () => {
                     start: "top center",
                     end: "60% center",
                     scrub: 5,
-                    markers: true
+                    
                 },
             }
         );

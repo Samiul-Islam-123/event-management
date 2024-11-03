@@ -31,7 +31,7 @@ const InfoSecond = () => {
                     start: "top center",
                     end: "60% center",
                     scrub: 3,
-                    markers: true
+                    
                 },
             }
         );
@@ -56,7 +56,7 @@ const InfoSecond = () => {
                     start: "center center",
                     end: "60% center",
                     scrub: 3,
-                    markers: true
+                    
                 },
             }
         );
