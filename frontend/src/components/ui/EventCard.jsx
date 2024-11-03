@@ -9,7 +9,9 @@ const EventCard = ({ _id, name, description, date, organizer, price, poster, loc
 
 
     return (
-        <div onClick={() => {
+        <div style={{
+            cursor : "pointer"
+        }} onClick={() => {
             navigate(`/app/eventDetails/${_id}`)
         }} className=" w-[290px] h-[360px] rounded-lg flex flex-col overflow-hidden border border-black m-3 shadow-lg shadow-gray-200 hover:shadow-gray-400 hover:scale-105 transition-all ease-in-out">
             <div className=" w-full h-[45%] bg-slate-300 overflow-hidden">

@@ -1,0 +1,39 @@
+name: CI/CD Pipeline
+
+on:
+  push:
+    branches:
+      - master  # Adjust to your branch name
+
+jobs:
+  deploy:
+    runs-on: self-hosted  # Use the self-hosted runner
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v2  # Action to checkout your repository
+
+      - name: Stop PM2
+        run: |
+          pm2 stop all || true  # Stop all running PM2 processes
+
+      - name: Install Backend Dependencies
+        run: |
+          cd backend
+          npm install  # Install dependencies for the backend
+
+      - name: Build Frontend
+        run: |
+          cd frontend  # Assuming your frontend is in a folder named 'client'
+          npm install  # Install dependencies for the frontend
+          npm run build  # Build the frontend
+
+      - name: Deploy Frontend
+        run: |
+          cd frontend/dist
+          pm2 start serve -s .
+
+      - name: deploy backend
+        run: |
+          cd backend
+          pm2 start index.js 
