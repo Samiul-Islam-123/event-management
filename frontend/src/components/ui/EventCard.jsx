@@ -5,6 +5,8 @@ import { useNavigate } from "react-router-dom";
 const EventCard = ({ _id, name, description, date, organizer, price, poster, location }) => {
 
     const navigate = useNavigate();
+// import { CiCalendar } from "react-icons/ci";
+
 
     return (
         <div onClick={() => {
