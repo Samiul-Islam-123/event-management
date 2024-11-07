@@ -4,10 +4,8 @@ import { useUser } from '@clerk/clerk-react';
 import { useFormData } from '../context/FormDataContext';
 
 function CreateEventForm({ onCancel }) {
-
   const { user } = useUser();
   const { saveFormData } = useFormData();
-
 
   const [formData, setFormData] = useState({
     name: '',
@@ -15,12 +13,14 @@ function CreateEventForm({ onCancel }) {
     date: '',
     limit: '',
     location: '',
-    price: '', // New state for ticket price
-    posterURL : '',
-    organizer: localStorage.getItem('user_id').toString() || '' // Setting organizer to user ID from Clerk
+    price: '',
+    posterURL: '',
+    qrCodeURL: '', // Field for payment QR code URL
+    organizer: localStorage.getItem('user_id')?.toString() || '' // Organizer's user ID
   });
 
-  const [poster, setPoster] = useState(null); // New state for poster image
+  const [poster, setPoster] = useState(null); // Event poster image file
+  const [qrCode, setQrCode] = useState(null); // Payment QR code image file
   const [errors, setErrors] = useState({});
 
   const handleChange = (e) => {
@@ -32,7 +32,11 @@ function CreateEventForm({ onCancel }) {
   };
 
   const handlePosterChange = (e) => {
-    setPoster(e.target.files[0]); // Capture the selected file
+    setPoster(e.target.files[0]); // Capture the selected poster file
+  };
+
+  const handleQrCodeChange = (e) => {
+    setQrCode(e.target.files[0]); // Capture the selected QR code file
   };
 
   const validateForm = () => {
@@ -43,7 +47,8 @@ function CreateEventForm({ onCancel }) {
     if (!formData.limit) newErrors.limit = 'Attendee limit is required';
     if (!formData.location) newErrors.location = 'Location is required';
     if (!formData.price) newErrors.price = 'Ticket price is required';
-    if (!formData.organizer) newErrors.organizer = 'Organizer name is required';
+    if (!poster) newErrors.poster = 'An event poster image is required';
+    if (!qrCode) newErrors.qrCode = 'A QR code for payment is required';
     return newErrors;
   };
 
@@ -52,82 +57,73 @@ function CreateEventForm({ onCancel }) {
     const newErrors = validateForm();
     if (Object.keys(newErrors).length > 0) {
       setErrors(newErrors);
-    } else {
-      console.log('poster////')
+      return;
+    }
+
+    try {
       const formDataObj = new FormData();
       Object.keys(formData).forEach((key) => {
         formDataObj.append(key, formData[key]);
       });
-      if (poster) {
-        console.log('poster found..............')
 
-        const posterData = new FormData();
-        posterData.append('poster', poster);
-        console.log("Uploading image....")
-        const PosterResponse = await axios.post(`${import.meta.env.VITE_API_URL}/event/poster`, posterData);
-        console.log(PosterResponse)
-        if (PosterResponse.data.success === true) {
-          console.log(PosterResponse.data.url);
-          setFormData((prevData) => ({
-              ...prevData,
-              posterURL: PosterResponse.data.url  // Corrected: using "posterURL" as a string key
-          }));
-          
-          // Store the updated formData in session storage
-          sessionStorage.setItem("formData", JSON.stringify({
-              ...formData,
-              posterURL: PosterResponse.data.url
-          }));
-          
-          //console.log(formData);
-      }
-      
-
-        else
-        alert(PosterResponse.data.message)
+      // Upload the poster image
+      const posterData = new FormData();
+      posterData.append('poster', poster);
+      const posterResponse = await axios.post(`${import.meta.env.VITE_API_URL}/event/poster`, posterData);
+      if (posterResponse.data.success) {
+        formDataObj.append('posterURL', posterResponse.data.url);
+      } else {
+        throw new Error('Failed to upload poster');
       }
 
-      else
-      return alert("A poster image is required")
-
-
-      try {
-
-
-        const response = await axios.post(`${import.meta.env.VITE_API_URL}/payment/checkout-session`, {
-          price: 20,//$20 for creating event
-          name: formData.name
-        }, {
-          headers: { 'Content-Type': 'application/json' }
-        });
-
-        console.log(response);
-
-        setFormData({
-          name: '',
-          description: '',
-          date: '',
-          limit: '',
-          location: '',
-          price: '', // Reset ticket price
-          organizer: user.id || ''
-        });
-        setPoster(null); // Reset the file input
-        setErrors({});
-
-        if (response.data.success === true) {
-          window.location.href = response.data.url;
-        } else {
-          alert(response.data.message);
-        }
-        onCancel();
-      } catch (error) {
-        console.error('Error creating event:', error);
-        alert('Failed to create event. Please try again.');
+      // Upload the QR code image
+      const qrCodeData = new FormData();
+      qrCodeData.append('qrCode', qrCode);
+      const qrCodeResponse = await axios.post(`${import.meta.env.VITE_API_URL}/event/qrCode`, qrCodeData);
+      if (qrCodeResponse.data.success) {
+        formDataObj.append('qrCodeURL', qrCodeResponse.data.url);
+      } else {
+        throw new Error('Failed to upload QR code');
       }
+
+      // Store the updated formData in session storage
+      sessionStorage.setItem('formData', JSON.stringify(formDataObj));
+
+      const response = await axios.post(`${import.meta.env.VITE_API_URL}/payment/checkout-session`, {
+        price: 20, // $20 for creating event
+        name: formData.name
+      }, {
+        headers: { 'Content-Type': 'application/json' }
+      });
+
+      console.log(response);
+
+      // Reset form after submission
+      setFormData({
+        name: '',
+        description: '',
+        date: '',
+        limit: '',
+        location: '',
+        price: '',
+        organizer: user.id || ''
+      });
+      setPoster(null);
+      setQrCode(null);
+      setErrors({});
+
+      if (response.data.success) {
+        window.location.href = response.data.url;
+      } else {
+        alert(response.data.message);
+      }
+
+      onCancel();
+    } catch (error) {
+      console.error('Error creating event:', error);
+      alert('Failed to create event. Please try again.');
     }
   };
-
 
   const handleCancel = () => {
     setFormData({
@@ -136,10 +132,11 @@ function CreateEventForm({ onCancel }) {
       date: '',
       limit: '',
       location: '',
-      price: '', // Reset ticket price
+      price: '',
       organizer: user.id || ''
     });
-    setPoster(null); // Reset poster image
+    setPoster(null);
+    setQrCode(null);
     setErrors({});
     onCancel();
   };
@@ -148,7 +145,6 @@ function CreateEventForm({ onCancel }) {
     <div className="container mx-auto px-4 py-8">
       <h1 className="text-3xl font-bold mb-8">Create New Event (for $20)</h1>
       <form onSubmit={handleSubmit} className="max-w-2xl mx-auto">
-
         <div className="mb-4">
           <label htmlFor="name" className="block text-sm font-medium text-gray-700">Event Name</label>
           <input
@@ -230,9 +226,7 @@ function CreateEventForm({ onCancel }) {
         </div>
 
         <div className="mb-4">
-          <label htmlFor="poster" className="block text-sm font-medium text-gray-700">
-            Event Poster
-          </label>
+          <label htmlFor="poster" className="block text-sm font-medium text-gray-700">Event Poster</label>
           <input
             type="file"
             id="poster"
@@ -242,6 +236,19 @@ function CreateEventForm({ onCancel }) {
             accept="image/*"
           />
           {errors.poster && <p className="mt-2 text-sm text-red-600">{errors.poster}</p>}
+        </div>
+
+        <div className="mb-4">
+          <label htmlFor="qrCode" className="block text-sm font-medium text-gray-700">Payment QR Code</label>
+          <input
+            type="file"
+            id="qrCode"
+            name="qrCode"
+            onChange={handleQrCodeChange}
+            className="mt-1 block w-full rounded-md border-gray-200 border shadow-sm focus:border-purple-500 focus:ring focus:ring-purple-500 focus:ring-opacity-50"
+            accept="image/*"
+          />
+          {errors.qrCode && <p className="mt-2 text-sm text-red-600">{errors.qrCode}</p>}
         </div>
 
         <div className="mt-6 flex space-x-4">

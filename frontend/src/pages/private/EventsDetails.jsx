@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from 'react'
 import Nav from '../../components/Nav'
 import img from '../../assets/image3.jpg'
-import { useParams } from 'react-router-dom'
+import { useNavigate, useParams } from 'react-router-dom'
 import axios from 'axios'
 import { CiCalendar, CiLocationOn } from "react-icons/ci";
 import { VscOrganization } from "react-icons/vsc";
@@ -13,6 +13,7 @@ const EventsDetails = () => {
 
     const { eventID } = useParams();
     const [details, setDetails] = useState(null);
+    const navigate = useNavigate();
 
     const fetchEventDetails = async () => {
         const response = await axios.get(`${import.meta.env.VITE_API_URL}/event/${eventID}`);
@@ -114,8 +115,10 @@ const EventsDetails = () => {
 
                             <div className=' w-fit h-[10vh] bg-white rounded-lg flex items-center border-2 justify-between px-6'>
                                 <h1 className=' text-[#E167FF] text-5xl font-bold mx-16'>${details.price}</h1>
-                                <button className=" px-7 py-3 w-fit bg-[#E167FF] hover:bg-[#3D004D] text-2xl font-semibold rounded-lg text-white transition-all ease-in-out ">
-                                    Buy Now
+                                <button onClick={()=>{
+                                    navigate(`/app/register-event/${eventID}`)
+                                }} className=" px-7 py-3 w-fit bg-[#E167FF] hover:bg-[#3D004D] text-2xl font-semibold rounded-lg text-white transition-all ease-in-out ">
+                                    Register
                                 </button>
                             </div>
 
