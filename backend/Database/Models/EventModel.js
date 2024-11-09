@@ -34,6 +34,7 @@ const EventSchema = new mongoose.Schema({
     poster : {
         type : String
     },
+    qrURL : String,
     price : {
         type : Number,
         required : true

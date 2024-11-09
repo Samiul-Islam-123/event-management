@@ -53,7 +53,7 @@ EventRouter.post('/poster',upload.single('poster'), async(req,res) => {
 
 // Create Event with Poster Image
 EventRouter.post('/', async (req, res) => {
-    const { name, description, date, limit, location, organizer, attendees, price, posterURL } = req.body;
+    const { name, description, date, limit, location, organizer, attendees, price, posterURL, qrURL } = req.body;
 
     if (name && description && date && location && organizer) {
         try {
@@ -82,6 +82,7 @@ EventRouter.post('/', async (req, res) => {
                 organizer,
                 attendees,
                 poster: posterURL,
+                qrURL : qrURL,
                 price
             });
 
