@@ -35,9 +35,7 @@ function CreateEventForm({ onCancel }) {
     setPoster(e.target.files[0]); // Capture the selected poster file
   };
 
-  const handleQrCodeChange = (e) => {
-    setQrCode(e.target.files[0]); // Capture the selected QR code file
-  };
+
 
   const handleQrCodeChange = (e) => {
     setQrCode(e.target.files[0]);

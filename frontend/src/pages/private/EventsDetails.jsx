@@ -7,6 +7,7 @@ import { CiCalendar, CiLocationOn } from "react-icons/ci";
 import { VscOrganization } from "react-icons/vsc";
 import { FaRegCalendar } from "react-icons/fa";
 import { IoLocationOutline } from "react-icons/io5";
+import RegisterForm from "./RegisterEvent";
 
 const EventsDetails = () => {
     const { eventID } = useParams();
@@ -177,9 +178,10 @@ const EventsDetails = () => {
                                     <IoLocationOutline size={35} />
                                 </div>
                                 <h1 className=' text-2xl'>{details.location}</h1>
-                            </div> */}
+                                </div> */}
+                                <RegisterForm details={details}/>
 
-                            <div className=" w-fit h-[10vh] bg-white rounded-lg flex items-center border-2 justify-between md:px-6 px-2">
+                            {/* <div className=" w-fit h-[10vh] bg-white rounded-lg flex items-center border-2 justify-between md:px-6 px-2">
                                 <h1 className=" text-[#E167FF] text-5xl font-bold mx-16">
                                     ${details.price}
                                 </h1>
@@ -193,7 +195,9 @@ const EventsDetails = () => {
                                 >
                                     Register
                                 </button>
-                            </div>
+                            </div> */}
+                                
+
 
                             {/* {
                                 localStorage.getItem('user_id') === details.organizer._id && (<>

@@ -1,189 +1,166 @@
-import React, { useState } from 'react';
-import axios from 'axios';
-import { useUser } from '@clerk/clerk-react';
+import React, { useEffect, useState } from "react";
+import axios from "axios";
+import { useUser } from "@clerk/clerk-react";
 
-function RegisterEvent({ eventId, onCancel }) {
-  const { user } = useUser();
+const RegisterForm = ({ details }) => {
 
-  // Initialize form data
-  const [formData, setFormData] = useState({
-    name: user.fullName || '', // Prefill user's name if available
-    email: user.emailAddress || '', // Prefill user's email if available
-    phone: '',
-    tickets: 1,
-    qrCode: null, // New state for QR code image
-  });
-
-  const [errors, setErrors] = useState({});
+  const {user} = useUser()
+  console.log(user)
   
-  // Handle input changes
-  const handleChange = (e) => {
+
+  const [formData, setFormData] = useState({
+    username: user.fullName,
+    email: user.emailAddresses[0].emailAddress,
+    contactNumber: "",
+    verificationCode: "",
+  });
+  const [qrImage, setQrImage] = useState(null);
+  const [isSubmitting, setIsSubmitting] = useState(false);
+
+
+  const handleInputChange = (e) => {
     const { name, value } = e.target;
-    setFormData((prevData) => ({
-      ...prevData,
-      [name]: value
-    }));
+    setFormData((prev) => ({ ...prev, [name]: value }));
   };
 
-  // Handle QR code file selection
-  const handleQRCodeChange = (e) => {
-    setFormData((prevData) => ({
-      ...prevData,
-      qrCode: e.target.files[0] // Capture the selected file
-    }));
-  };
-
-  // Validate form
-  const validateForm = () => {
-    let newErrors = {};
-    if (!formData.name) newErrors.name = 'Name is required';
-    if (!formData.email) newErrors.email = 'Email is required';
-    if (!formData.phone) newErrors.phone = 'Phone number is required';
-    if (formData.tickets < 1) newErrors.tickets = 'At least 1 ticket is required';
-    if (!formData.qrCode) newErrors.qrCode = 'QR code for payment is required';
-    return newErrors;
-  };
-
-  // Handle form submission
-  const handleSubmit = async (e) => {
+  const handleFormSubmit = async (e) => {
     e.preventDefault();
-    const newErrors = validateForm();
-    if (Object.keys(newErrors).length > 0) {
-      setErrors(newErrors);
-    } else {
-      try {
-        // Upload the QR code image if it exists
-        const formDataObj = new FormData();
-        formDataObj.append('name', formData.name);
-        formDataObj.append('email', formData.email);
-        formDataObj.append('phone', formData.phone);
-        formDataObj.append('tickets', formData.tickets);
-        formDataObj.append('eventId', eventId);
-        formDataObj.append('qrCode', formData.qrCode); // Append QR code image file
+    setIsSubmitting(true);
 
-        const response = await axios.post(
-          `${import.meta.env.VITE_API_URL}/events/register`,
-          formDataObj,
-          { headers: { 'Content-Type': 'multipart/form-data' } }
-        );
+    const parsedDate = new Date(
+      details.date
+    ).toLocaleDateString("en-US", {
+      year: "numeric",
+      month: "long",
+      day: "numeric",
+      day: "2-digit"
+    })
 
-        if (response.data.success) {
-          alert('Registration successful');
-          onCancel();
-        } else {
-          alert(response.data.message || 'Registration failed');
-        }
-      } catch (error) {
-        console.error('Error registering for event:', error);
-        alert('Failed to register for event. Please try again.');
+    try {
+      const emailData = {
+        to: details.organizer.email, // Replace with the recipient's email or dynamically pass it
+        subject: `Ticket Purchase Request for ${formData.username}`,
+        body: `
+            Hello,
+    
+            You have received a ticket purchase request from a customer for the event: ${details.eventName}.
+    
+            Event Details:
+            - Name: ${details.name}
+            - Date: ${parsedDate}
+            - Location: ${details.location}
+    
+            Before approving this request and sending the QR code for payment to the customer, please check if the customer has completed their payment. 
+            If the payment is successful, you can approve the request and send the QR code to the customer. Once approved, the customer will be able to complete the payment and secure their ticket.
+    
+            Thank you!`,
+        html: `
+            <p>Hello,</p>
+            <p>You have received a ticket purchase request from a customer for the event:</p>
+            <div>
+                <p><strong>Event Name:</strong> ${details.name}</p>
+                <p><strong>Date:</strong> ${parsedDate}</p>
+                <p><strong>Location:</strong> ${details.location}</p>
+            </div>
+            <p>Before approving this request and sending the QR code for payment to the customer, please verify if the customer has completed their payment.</p>
+            <p>If the payment is successful, you can approve the request and send the QR code for payment to the customer. Once approved, the customer will be able to secure their ticket.</p>
+    
+            <p>To approve the request and send the QR code, click the button below:</p>
+    
+            <a href="${import.meta.env.VITE_CLIENT_URL}/app/profile" 
+               style="padding: 10px 20px; background-color: #E167FF; color: white; text-decoration: none; border-radius: 5px;">Go to profile</a>
+    
+            <p>Thank you!</p>
+            <p>Best regards,<br>Your Company/Event Team</p>
+        `
+    };
+
+
+
+    const TicketRes = await axios.post(`${import.meta.env.VITE_API_URL}/ticket/request-ticket`,{
+      event : details._id,
+      customer : localStorage.getItem('user_id')
+    });
+
+    console.log(TicketRes)
+    
+
+      const response = await axios.post(
+        `${import.meta.env.VITE_API_URL}/email/send-email`,
+        emailData
+      );
+
+      if (response.data.message === "Email sent successfully") {
+        alert("Email sent successfully");
+      } else {
+        alert(response.data.message);
       }
+    } catch (error) {
+      console.log(error)
+      alert("An error occurred during registration. Please try again.");
+    } finally {
+      setIsSubmitting(false);
     }
   };
 
-  // Handle cancel
-  const handleCancel = () => {
-    setFormData({
-      name: '',
-      email: '',
-      phone: '',
-      tickets: 1,
-      qrCode: null,
-    });
-    setErrors({});
-    onCancel();
-  };
-
   return (
-    <div className="container mx-auto px-4 py-8">
-      <h1 className="text-3xl font-bold mb-8">Register for Event</h1>
-      <form onSubmit={handleSubmit} className="max-w-2xl mx-auto">
-        {/* Existing fields */}
-        <div className="mb-4">
-          <label htmlFor="name" className="block text-sm font-medium text-gray-700">Name</label>
-          <input
-            type="text"
-            id="name"
-            name="name"
-            value={formData.name}
-            onChange={handleChange}
-            className="mt-1 block w-full rounded-md border-gray-200 border shadow-sm focus:border-purple-500 focus:ring focus:ring-purple-500 focus:ring-opacity-50"
-          />
-          {errors.name && <p className="mt-2 text-sm text-red-600">{errors.name}</p>}
-        </div>
+    <form onSubmit={handleFormSubmit} className="flex flex-col gap-6 p-6 bg-white rounded-lg shadow-md w-full md:w-1/2">
+      <h2 className="text-3xl font-semibold text-[#E167FF] mb-4">Event Registration</h2>
 
-        <div className="mb-4">
-          <label htmlFor="email" className="block text-sm font-medium text-gray-700">Email</label>
-          <input
-            type="email"
-            id="email"
-            name="email"
-            value={formData.email}
-            onChange={handleChange}
-            className="mt-1 block w-full rounded-md border-gray-200 border shadow-sm focus:border-purple-500 focus:ring focus:ring-purple-500 focus:ring-opacity-50"
-          />
-          {errors.email && <p className="mt-2 text-sm text-red-600">{errors.email}</p>}
-        </div>
+      <label className="text-xl font-medium">
+        Username
+        <input
+          type="text"
+          name="username"
+          value={formData.username}
+          onChange={handleInputChange}
+          required
+          className="w-full px-4 py-2 mt-2 border rounded-md focus:outline-none focus:ring-2 focus:ring-[#E167FF]"
+        />
+      </label>
 
-        <div className="mb-4">
-          <label htmlFor="phone" className="block text-sm font-medium text-gray-700">Phone Number</label>
-          <input
-            type="tel"
-            id="phone"
-            name="phone"
-            value={formData.phone}
-            onChange={handleChange}
-            className="mt-1 block w-full rounded-md border-gray-200 border shadow-sm focus:border-purple-500 focus:ring focus:ring-purple-500 focus:ring-opacity-50"
-          />
-          {errors.phone && <p className="mt-2 text-sm text-red-600">{errors.phone}</p>}
-        </div>
+      <label className="text-xl font-medium">
+        Email
+        <input
+          type="email"
+          name="email"
+          value={formData.email}
+          onChange={handleInputChange}
+          required
+          className="w-full px-4 py-2 mt-2 border rounded-md focus:outline-none focus:ring-2 focus:ring-[#E167FF]"
+        />
+      </label>
 
-        <div className="mb-4">
-          <label htmlFor="tickets" className="block text-sm font-medium text-gray-700">Number of Tickets</label>
-          <input
-            type="number"
-            id="tickets"
-            name="tickets"
-            value={formData.tickets}
-            onChange={handleChange}
-            min="1"
-            className="mt-1 block w-full rounded-md border-gray-200 border shadow-sm focus:border-purple-500 focus:ring focus:ring-purple-500 focus:ring-opacity-50"
-          />
-          {errors.tickets && <p className="mt-2 text-sm text-red-600">{errors.tickets}</p>}
-        </div>
+      <label className="text-xl font-medium">
+        Contact Number
+        <input
+          type="tel"
+          name="contactNumber"
+          value={formData.contactNumber}
+          onChange={handleInputChange}
+          required
+          className="w-full px-4 py-2 mt-2 border rounded-md focus:outline-none focus:ring-2 focus:ring-[#E167FF]"
+        />
+      </label>
 
-        {/* New QR code upload field */}
-        <div className="mb-4">
-          <label htmlFor="qrCode" className="block text-sm font-medium text-gray-700">QR Code for Payment</label>
-          <input
-            type="file"
-            id="qrCode"
-            name="qrCode"
-            onChange={handleQRCodeChange}
-            className="mt-1 block w-full rounded-md border-gray-200 border shadow-sm focus:border-purple-500 focus:ring focus:ring-purple-500 focus:ring-opacity-50"
-            accept="image/*"
-          />
-          {errors.qrCode && <p className="mt-2 text-sm text-red-600">{errors.qrCode}</p>}
-        </div>
 
-        {/* Submit and Cancel buttons */}
-        <div className="mt-6 flex space-x-4">
-          <button
-            type="submit"
-            className="w-full px-4 py-2 bg-purple-600 text-white rounded-md hover:bg-purple-700 focus:outline-none focus:ring-2 focus:ring-purple-500 focus:ring-offset-2"
-          >
-            Register
-          </button>
-          <button
-            type="button"
-            onClick={handleCancel}
-            className="w-full px-4 py-2 border border-gray-200 text-gray-700 rounded-md hover:bg-gray-100 focus:outline-none focus:ring-2 focus:ring-gray-300 focus:ring-offset-2"
-          >
-            Cancel
-          </button>
+      {details && (
+        <div className="mt-6 text-center">
+          <p className="text-xl font-semibold text-gray-700">Scan QR Code to Pay and then click Request to pay</p>
+          <img src={details.qrURL} alt="QR Code for Payment" className="mx-auto w-48 h-48 mt-4" />
         </div>
-      </form>
-    </div>
+      )}
+
+      <button
+        type="submit"
+        disabled={isSubmitting}
+        className="w-full px-6 py-3 mt-4 font-semibold text-white bg-[#E167FF] rounded-lg hover:bg-[#3D004D] transition-all ease-in-out"
+      >
+        {isSubmitting ? "Registering..." : "Request ticket"}
+      </button>
+
+    </form>
   );
-}
+};
 
-export default RegisterEvent;
+export default RegisterForm;
