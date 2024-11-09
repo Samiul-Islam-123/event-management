@@ -39,6 +39,10 @@ function CreateEventForm({ onCancel }) {
     setQrCode(e.target.files[0]); // Capture the selected QR code file
   };
 
+  const handleQrCodeChange = (e) => {
+    setQrCode(e.target.files[0]);
+  }
+
   const validateForm = () => {
     let newErrors = {};
     if (!formData.name) newErrors.name = 'Event name is required';

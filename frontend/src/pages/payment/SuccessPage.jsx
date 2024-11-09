@@ -23,7 +23,7 @@ const SuccessPage = () => {
            }
            else{
                alert(EventResponse.data.message)
-               navigate('/app/profile');
+              navigate('/app/profile');
 
            }
         }
