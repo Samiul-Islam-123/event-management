@@ -5,6 +5,7 @@ import InfoSecond from '../../components/InfoSecond'
 import Events from '../../components/Events'
 import Nav from '../../components/Nav'
 import Footer from '../../components/Footer'
+import Marquee from '../../components/Marquee'
 
 function LandingPage() {
   return (
@@ -12,6 +13,7 @@ function LandingPage() {
       <Nav />
       <Hero />
       <Info />
+      <Marquee />
       <InfoSecond />
       <Events />
       <Footer />
