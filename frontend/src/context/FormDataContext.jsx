@@ -1,30 +1,22 @@
-// FormDataContext.js
-import React, { createContext, useContext, useEffect, useState } from 'react';
+import React, { createContext, useState, useContext, useEffect } from 'react';
 
+// Create a context to store form data
 const FormDataContext = createContext();
 
-export const useFormData = () => {
-    return useContext(FormDataContext);
-};
-
+// Create a provider component
 export const FormDataProvider = ({ children }) => {
-    const [formData, setFormData] = useState(null);
-    
-    useEffect(() => {
-        console.log(formData)
-    },[formData])
+  const [Data, setData] = useState(null);
 
-    const saveFormData = (data) => {
-        setFormData(data);
-    };
+  useEffect(() => {
+    console.log(Data)
+  },[Data])
 
-    const clearFormData = () => {
-        setFormData(null);
-    };
-
-    return (
-        <FormDataContext.Provider value={{ formData, saveFormData, clearFormData }}>
-            {children}
-        </FormDataContext.Provider>
-    );
+  return (
+    <FormDataContext.Provider value={{ Data, setData }}>
+      {children}
+    </FormDataContext.Provider>
+  );
 };
+
+// Custom hook to use form data context
+export const useFormData = () => useContext(FormDataContext);

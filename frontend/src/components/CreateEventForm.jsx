@@ -5,7 +5,7 @@ import { useFormData } from '../context/FormDataContext';
 
 function CreateEventForm({ onCancel }) {
   const { user } = useUser();
-  const { saveFormData } = useFormData();
+  const { setData } = useFormData();
 
   const [formData, setFormData] = useState({
     name: '',
@@ -37,10 +37,6 @@ function CreateEventForm({ onCancel }) {
 
 
 
-  const handleQrCodeChange = (e) => {
-    setQrCode(e.target.files[0]);
-  }
-
   const validateForm = () => {
     let newErrors = {};
     if (!formData.name) newErrors.name = 'Event name is required';
@@ -50,7 +46,6 @@ function CreateEventForm({ onCancel }) {
     if (!formData.location) newErrors.location = 'Location is required';
     if (!formData.price) newErrors.price = 'Ticket price is required';
     if (!poster) newErrors.poster = 'An event poster image is required';
-    if (!qrCode) newErrors.qrCode = 'A QR code for payment is required';
     return newErrors;
   };
 
@@ -71,25 +66,32 @@ function CreateEventForm({ onCancel }) {
       // Upload the poster image
       const posterData = new FormData();
       posterData.append('poster', poster);
-      const posterResponse = await axios.post(`${import.meta.env.VITE_API_URL}/event/poster`, posterData);
-      if (posterResponse.data.success) {
-        formDataObj.append('posterURL', posterResponse.data.url);
-      } else {
-        throw new Error('Failed to upload poster');
+
+      try {
+        const posterResponse = await axios.post(`${import.meta.env.VITE_API_URL}/event/poster`, posterData);
+        if (posterResponse.data.success) {
+          console.log("Poster uploaded successfully:", posterResponse.data.url);
+
+          setFormData((prevData) => {
+            const updatedData = {
+              ...prevData,
+              posterURL: posterResponse.data.url,
+            };
+            console.log("Updated formData:", updatedData); // Log immediately after update
+            setData(updatedData)
+            sessionStorage.setItem('formData', JSON.stringify(updatedData));
+            return updatedData;
+          });
+        } else {
+          throw new Error('Failed to upload poster');
+        }
+      } catch (error) {
+        console.error("Error uploading poster:", error.message);
       }
 
-      // Upload the QR code image
-      const qrCodeData = new FormData();
-      qrCodeData.append('qrCode', qrCode);
-      const qrCodeResponse = await axios.post(`${import.meta.env.VITE_API_URL}/event/qrCode`, qrCodeData);
-      if (qrCodeResponse.data.success) {
-        formDataObj.append('qrCodeURL', qrCodeResponse.data.url);
-      } else {
-        throw new Error('Failed to upload QR code');
-      }
+      console.log("Final formData after update:", formData); // May still show the old state here
 
       // Store the updated formData in session storage
-      sessionStorage.setItem('formData', JSON.stringify(formDataObj));
 
       const response = await axios.post(`${import.meta.env.VITE_API_URL}/payment/checkout-session`, {
         price: 20, // $20 for creating event
@@ -240,18 +242,7 @@ function CreateEventForm({ onCancel }) {
           {errors.poster && <p className="mt-2 text-sm text-red-600">{errors.poster}</p>}
         </div>
 
-        <div className="mb-4">
-          <label htmlFor="qrCode" className="block text-sm font-medium text-gray-700">Payment QR Code</label>
-          <input
-            type="file"
-            id="qrCode"
-            name="qrCode"
-            onChange={handleQrCodeChange}
-            className="mt-1 block w-full rounded-md border-gray-200 border shadow-sm focus:border-purple-500 focus:ring focus:ring-purple-500 focus:ring-opacity-50"
-            accept="image/*"
-          />
-          {errors.qrCode && <p className="mt-2 text-sm text-red-600">{errors.qrCode}</p>}
-        </div>
+
 
         <div className="mt-6 flex space-x-4">
           <button

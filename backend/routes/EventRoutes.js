@@ -3,6 +3,7 @@ const EventModel = require('../Database/Models/EventModel');
 const upload = require('../config/multer');
 const EventRouter = express.Router();
 const cloudinary = require('../config/cloudinary');
+const UserModel = require('../Database/Models/UserModel');
 
 const stripe = require('stripe')(process.env.STRIPE_SECRET_KEY);
 
@@ -51,17 +52,52 @@ EventRouter.post('/poster',upload.single('poster'), async(req,res) => {
     }
 })
 
+
 // Create Event with Poster Image
 EventRouter.post('/', async (req, res) => {
-    const { name, description, date, limit, location, organizer, attendees, price, posterURL, qrURL } = req.body;
+    const { name, description, date, limit, location, organizer, tickets, price, posterURL } = req.body;
 
     if (name && description && date && location && organizer) {
         try {
+            // Check if the organizer exists in the UserModel
+            let existingOrganizer = await UserModel.findOne({ _id: organizer }); 
+
+            if (!existingOrganizer) {
+                return res.json({
+                    success : false,
+                    message: "Organizer not found"
+                })
+
+                
+            }
+
+            else if(!existingOrganizer.stripe_id){
+
+                const [firstName, lastName] = existingOrganizer.username.split(" ");
+                
+                // Create a Stripe Express account for the organizer
+                const account = await stripe.accounts.create({
+                    type: 'standard',
+                    email: existingOrganizer.email,
+                    country: 'FR',
+                    business_type: 'individual', // or 'company', depending on the organizer type
+                    individual: {
+                        first_name: firstName,
+                        last_name: lastName,
+                    }
+                });
+                
+                // Save the Stripe account ID to the UserModel
+                existingOrganizer.stripe_id = account.id; // Store Stripe ID in the User model
+                
+                await existingOrganizer.save(); // Save the new organizer with Stripe ID
+            }
+
             // Check for existing event to prevent duplicates
             const existingEvent = await EventModel.findOne({
                 name,
                 date,
-                organizer
+                organizer: existingOrganizer._id // Use the organizer ID here
             });
 
             if (existingEvent) {
@@ -71,22 +107,22 @@ EventRouter.post('/', async (req, res) => {
                 });
             }
 
-
-            // Create new event with poster URL
+            // Create new event with the organizer's ID and poster URL
             const newEvent = new EventModel({
                 name,
                 description,
                 date,
                 limit,
                 location,
-                organizer,
-                attendees,
+                organizer: existingOrganizer._id, // Use the organizer's ID
+                tickets,
                 poster: posterURL,
-                qrURL : qrURL,
                 price
             });
 
             await newEvent.save();
+
+            // Respond with success and event details
             res.json({
                 success: true,
                 message: "Event created successfully",
@@ -94,6 +130,7 @@ EventRouter.post('/', async (req, res) => {
             });
 
         } catch (error) {
+            console.log(error)
             res.json({
                 success: false,
                 message: "Error creating event",
@@ -108,13 +145,14 @@ EventRouter.post('/', async (req, res) => {
     }
 });
 
+
 // Get Event by ID
 EventRouter.get('/:id', async (req, res) => {
     const { id } = req.params;
 
     if (id) {
         try {
-            const event = await EventModel.findById(id).populate('organizer').populate('attendees');
+            const event = await EventModel.findById(id).populate('organizer').populate('tickets');
 
             if (event) {
                 res.json({
@@ -128,6 +166,7 @@ EventRouter.get('/:id', async (req, res) => {
                 });
             }
         } catch (error) {
+            console.log(error)
             res.json({
                 success: false,
                 message: "Error fetching event",
@@ -151,7 +190,7 @@ EventRouter.get('/my-events/:userId', async (req, res) => {
             // Fetch events where the user is the organizer
             const events = await EventModel.find({ organizer: userId })
                 .populate('organizer')
-                .populate('attendees');
+                .populate('tickets');
 
             if (events.length > 0) {
                 res.json({
@@ -182,7 +221,7 @@ EventRouter.get('/my-events/:userId', async (req, res) => {
 // Get All Events
 EventRouter.get('/', async (req, res) => {
     try {
-        const events = await EventModel.find().populate('organizer').populate('attendees');
+        const events = await EventModel.find().populate('organizer').populate('tickets');
         res.json({
             success: true,
             events
@@ -201,15 +240,15 @@ EventRouter.get('/', async (req, res) => {
 // Update Event by ID
 EventRouter.put('/:id', async (req, res) => {
     const { id } = req.params;
-    const { name, description, date, limit, location, organizer, attendees } = req.body;
+    const { name, description, date, limit, location, organizer, tickets } = req.body;
 
     if (id) {
         try {
             const updatedEvent = await EventModel.findByIdAndUpdate(
                 id,
-                { name, description, date, limit, location, organizer, attendees },
+                { name, description, date, limit, location, organizer, tickets },
                 { new: true, runValidators: true }
-            ).populate('organizer').populate('attendees');
+            ).populate('organizer').populate('tickets');
 
             if (updatedEvent) {
                 res.json({
