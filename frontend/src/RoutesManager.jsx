@@ -15,6 +15,7 @@ import Cookies from "js-cookie"
 import SuccessPage from './pages/payment/SuccessPage';
 import CancelPage from './pages/payment/CancelPage';
 import RegisterEvent from './pages/private/RegisterEvent';
+import SuccessSplit from './pages/payment/SuccessSplit';
 
 function RoutesManager() {
   const { isSignedIn, isLoaded, user } = useUser(); // Get the user object for additional info
@@ -93,6 +94,7 @@ function RoutesManager() {
       {/* Catch-all Route */}
       <Route path="/success" element={<SuccessPage />} />
       <Route path="/cancel" element={<CancelPage />} />
+      <Route path="/success-split" element={<SuccessSplit />} />
       
 
       {/* <Route path="*" element={<Navigate to="/" />} /> */}

@@ -27,9 +27,9 @@ const EventSchema = new mongoose.Schema({
         ref : 'user',
         required: true
     },
-    attendees: [{
+    tickets: [{
         type : mongoose.Schema.Types.ObjectId,
-        ref : 'user'
+        ref : 'ticket'
     }],
     poster : {
         type : String

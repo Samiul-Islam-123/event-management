@@ -34,6 +34,64 @@ TicketRoutes.post('/request-ticket', async(req,res) => {
     }
 })
 
+// Create Ticket Route
+TicketRoutes.post('/create-ticket', async (req, res) => {
+    const { eventID, customerID, ticketCount } = req.body;
+
+    // Validate request body
+    if (!eventID || !customerID || !ticketCount) {
+        return res.status(400).json({
+            success: false,
+            message: "eventID, customerID, and ticketCount are required fields."
+        });
+    }
+
+    if (typeof ticketCount !== 'number' || ticketCount <= 0) {
+        return res.status(400).json({
+            success: false,
+            message: "ticketCount must be a positive number."
+        });
+    }
+
+    try {
+        // Create a new ticket
+        const ticket = new TicketModel({
+            event: eventID,
+            customer: customerID,
+            count: ticketCount,
+        });
+
+        // Save ticket to the database
+        await ticket.save();
+
+        //update the attandee in events
+        const event = await EventModel.findById(eventID);
+        if(!event){
+            return res.json({
+                success : false,
+                message : "Event not found"
+            })
+        }
+        event.tickets.push(ticket._id);
+        await event.save();
+
+        // Send success response
+        return res.status(201).json({
+            success: true,
+            message: "Ticket created successfully",
+            ticket: ticket,  // Send the created ticket object back
+        });
+    } catch (error) {
+        // Error handling
+        console.error(error);
+        return res.status(500).json({
+            success: false,
+            message: "Error creating ticket. Please try again later.",
+            error: error.message
+        });
+    }
+});
+
 TicketRoutes.get('/ticket-requests/:organizerID', async (req, res) => {
     const { organizerID } = req.params;
 
@@ -116,5 +174,27 @@ TicketRoutes.post('/approve-ticket', async (req, res) => {
         res.status(500).json({ success: false, message: "An error occurred while approving the ticket" });
     }
 });
+
+TicketRoutes.get('/bought/:customerID', async(req,res) => {
+    const {customerID} = req.params;
+    try {
+        const BoughtTickets = await TicketModel.find({
+            customer : customerID
+        }).populate('event')
+        .populate('customer')
+
+        res.json({
+            success: true,
+            boughtTickets: BoughtTickets
+        })
+    }
+    catch(error){
+        return res.json({
+            success: false,
+            message: "Error fetching tickets",
+            error: error.message
+        })
+    }
+})
 
 module.exports = TicketRoutes;

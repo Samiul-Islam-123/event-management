@@ -3,28 +3,29 @@ import React, { useEffect } from 'react';
 import { useLocation, useNavigate } from 'react-router-dom';
 import { useFormData } from '../../context/FormDataContext';
 
-const SuccessPage = () => {
+const SuccessSplit = () => {
   const location = useLocation();
   const navigate = useNavigate();
   const { Data } = useFormData();
 
     const ProcessEventData = async(sessionId) => {
         //verify session id
-        const verifyResponse = await axios.get(`${import.meta.env.VITE_API_URL}/payment/verify-session?sessionID=${sessionId}`);
+        const verifyResponse = await axios.get(`${import.meta.env.VITE_API_URL}/payment/success-split?sessionID=${sessionId}`);
         console.log(verifyResponse)
         //console.log(verifyResponse.data.success === true && verifyResponse.data.session.payment_status ==='paid')
-        if(verifyResponse.data.success === true && verifyResponse.data.session.payment_status ==='paid'){
-            const storedFormData = JSON.parse(sessionStorage.getItem("formData"));
+        if(verifyResponse.data.success === true){
+            const storedFormData = JSON.parse(sessionStorage.getItem("ticket-data"));
             console.log(storedFormData)
-            const EventResponse = await axios.post(`${import.meta.env.VITE_API_URL}/event`, storedFormData)
-
-           if(EventResponse.data.success === true){
-            sessionStorage.removeItem("formData");
+            const TicketResponse = await axios.post(`${import.meta.env.VITE_API_URL}/ticket/create-ticket`, storedFormData)
+            console.log(TicketResponse)
+           if(TicketResponse.data.success === true){
+            alert(TicketResponse.data.message)
+            sessionStorage.removeItem("ticket-data");
             navigate('/app/profile');
            }
            else{
-               alert(EventResponse.data.message)
-               console.log(EventResponse.data)
+               alert(TicketResponse.data.message)
+               console.log(TicketResponse.data)
                //cancel the payment
               //navigate('/app/profile');
 
@@ -57,4 +58,4 @@ const SuccessPage = () => {
   );
 };
 
-export default SuccessPage;
+export default SuccessSplit;

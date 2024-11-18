@@ -1,13 +1,23 @@
 import React, { useEffect, useState } from "react";
 import axios from "axios";
 import { useUser } from "@clerk/clerk-react";
+import { loadStripe } from '@stripe/stripe-js';
+
+let stripePromise;
+
+const getStripe = () => {
+    if (!stripePromise) {
+        stripePromise = loadStripe(import.meta.env.VITE_STRIPE_PUBLISHABLE_KEY);
+    }
+    return stripePromise;
+};
 
 const RegisterForm = ({ details, ticketQuantity, setTicketQuantity }) => {
     const { user } = useUser();
 
     const [formData, setFormData] = useState({
-        username: user.fullName,
-        email: user.emailAddresses[0].emailAddress,
+        username: user.fullName ? user.fullName : "",
+        email: user.emailAddresses[0].emailAddress ? user.emailAddresses[0].emailAddress : "",
         contactNumber: "",
         verificationCode: "",
     });
@@ -29,70 +39,39 @@ const RegisterForm = ({ details, ticketQuantity, setTicketQuantity }) => {
         e.preventDefault();
         setIsSubmitting(true);
 
-        const parsedDate = new Date(details.date).toLocaleDateString("en-US", {
-            year: "numeric",
-            month: "long",
-            day: "2-digit",
-        });
-
         try {
-            const emailData = {
-                to: details.organizer.email,
-                subject: `Ticket Purchase Request for ${formData.username}`,
-                body: `
-            Hello,
+            const response = await axios.post(import.meta.env.VITE_API_URL + '/payment/checkout-session-split', {
+                ticketQuantity,
+                organizerAccountId: details.organizer.stripe_id,
+                eventOwnerAccountId: 'acct_1QLrAdATuFnOEMSe',// this is from env
+                unitAmount: details.price,
+            });
 
-            You have received a ticket purchase request from a customer for the event: ${details.eventName}.
+            //const { id } = response.data;
+            //console.log(details)
+            console.log(response)
 
-            Event Details:
-            - Name: ${details.name}
-            - Date: ${parsedDate}
-            - Location: ${details.location}
-            - Tickets requested: ${ticketQuantity}
-
-            Please verify payment before approving.
-            Thank you!`,
-                html: `
-            <p>Hello,</p>
-            <p>You have received a ticket purchase request from a customer for the event:</p>
-            <div>
-                <p><strong>Event Name:</strong> ${details.name}</p>
-                <p><strong>Date:</strong> ${parsedDate}</p>
-                <p><strong>Location:</strong> ${details.location}</p>
-                <p><strong>Tickets requested:</strong> ${ticketQuantity}</p>
-            </div>
-            <p>Please verify payment before approving.</p>
-            <p>Thank you!</p>
-            <p>Best regards,<br>Your Company/Event Team</p>
-        `,
-            };
-
-            const TicketRes = await axios.post(
-                `${import.meta.env.VITE_API_URL}/ticket/request-ticket`,
-                {
-                    event: details._id,
-                    customer: localStorage.getItem("user_id"),
-                    quantity: ticketQuantity,
-                }
-            );
-
-            const response = await axios.post(
-                `${import.meta.env.VITE_API_URL}/email/send-email`,
-                emailData
-            );
-
-            if (response.data.message === "Email sent successfully") {
-                alert("Email sent successfully");
-            } else {
-                alert(response.data.message);
-            }
+            sessionStorage.setItem('ticket-data', JSON.stringify({
+                eventID: details._id, 
+                customerID: localStorage.getItem("user_id"), 
+                ticketCount: ticketQuantity
+            }));
+            // Redirect the user to Stripe's hosted Checkout page
+            //const stripe = await getStripe();
+            //const { error } = await stripe.redirectToCheckout({ sessionId: id });
+            window.location.href = response.data.url;
+            // if (error) {
+            //     console.log('Error redirecting to checkout', error);
+            //     alert('An error occurred. Please try again.');
+            // }
         } catch (error) {
             console.log(error);
-            alert("An error occurred during registration. Please try again.");
+            alert('An error occurred during registration. Please try again.');
         } finally {
             setIsSubmitting(false);
         }
     };
+
 
     return (
         <form
@@ -175,13 +154,13 @@ const RegisterForm = ({ details, ticketQuantity, setTicketQuantity }) => {
                     Total Price:
                     <div className="flex items-center mt-2 px-4 py-2 rounded-xl border">
                         <h1 className="text-xl font-semibold text-[#E167FF]">
-                            ${(details.price)*ticketQuantity}
+                            ${(details.price) * ticketQuantity}
                         </h1>
                     </div>
                 </div>
             </div>
 
-            {details && (
+            {/* {details && (
                 <div className="mt-6 text-center">
                     <p className="text-xl font-semibold text-gray-700">
                         Scan QR Code to Pay and then click Request to pay
@@ -192,11 +171,14 @@ const RegisterForm = ({ details, ticketQuantity, setTicketQuantity }) => {
                         className="mx-auto w-48 h-48 mt-4"
                     />
                 </div>
-            )}
+            )} */}
 
             <button
                 type="submit"
                 disabled={isSubmitting}
+                onClick={() => {
+                    console.log("Creating payment intent...")
+                }}
                 className="w-full px-6 py-3 mt-4 font-semibold text-white bg-[#E167FF] rounded-lg hover:bg-[#3D004D] transition-all ease-in-out"
             >
                 {isSubmitting ? "Registering..." : "Request ticket"}
