@@ -39,6 +39,13 @@ const RegisterForm = ({ details, ticketQuantity, setTicketQuantity }) => {
         e.preventDefault();
         setIsSubmitting(true);
 
+        console.log({
+            ticketQuantity,
+            organizerAccountId: details.organizer.stripe_id,
+            eventOwnerAccountId: 'acct_1QLrAdATuFnOEMSe',// this is from env
+            unitAmount: details.price,
+        })
+
         try {
             const response = await axios.post(import.meta.env.VITE_API_URL + '/payment/checkout-session-split', {
                 ticketQuantity,

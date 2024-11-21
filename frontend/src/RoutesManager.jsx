@@ -16,6 +16,7 @@ import SuccessPage from './pages/payment/SuccessPage';
 import CancelPage from './pages/payment/CancelPage';
 import RegisterEvent from './pages/private/RegisterEvent';
 import SuccessSplit from './pages/payment/SuccessSplit';
+import ContactPage from './pages/public/ContactPage';
 
 function RoutesManager() {
   const { isSignedIn, isLoaded, user } = useUser(); // Get the user object for additional info
@@ -83,6 +84,7 @@ function RoutesManager() {
       <Route path="/" element={<LandingPage />} />
       <Route path="/login" element={<LoginPage />} />
       <Route path="/signup" element={<SignupPage />} />
+      <Route path='/contact-us' element={<ContactPage />} />
 
       {/* Protected Routes */}
       <Route path="/app/events" element={isSignedIn ? <EventsPage /> : <Navigate to="/login" />} />

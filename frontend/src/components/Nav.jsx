@@ -109,7 +109,11 @@ const Nav = () => {
                             <a href="#" className="block px-4 py-2 text-gray-800 hover:bg-blue-100">Featured Events</a>
                         </div>
                     </li>
-                    <li>Contact</li>
+                    <li style={{
+                        cursor : "pointer"
+                    }} onClick={() => {
+                        navigate('/contact-us')
+                    }}>Contact</li>
                 </ul>
 
                 {/* Profile Icon for Desktop */}
