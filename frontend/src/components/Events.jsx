@@ -10,6 +10,7 @@ const Events = () => {
   const navigate = useNavigate();
 
   const fetchEvents = async () => {
+    console.log(`${import.meta.env.VITE_API_URL}/event/`);
     const response = await axios.get(`${import.meta.env.VITE_API_URL}/event/`);
 
     console.log(response)
@@ -42,10 +43,10 @@ const Events = () => {
       </div>
 
       <div className='w-full flex-col flex min-h-screen py-20 '>
-        <div className=' w-full flex  justify-between min-h-[42vh]  md:pl-12 md:flex-row flex-col mb-16'>
-          <div className=' flex flex-col '>
-            <h1 className=' md:text-4xl text-3xl text-[#3D004D] font-semibold mb-3'>Upcoming <br /> Events</h1>
-            <hr className=' border-[2.5px] border-[#3D004D] w-16' />
+        <div className=' w-full flex items-center justify-between min-h-[42vh]  md:pl-12  flex-col mb-16'>
+          <div className=' flex flex-col w-[80%]'>
+            <div className='w-full'><h1 className=' md:text-4xl text-3xl text-[#3D004D] font-semibold mb-3'>Upcoming <br /> Events</h1>
+            <hr className=' border-[2.5px] border-[#3D004D] w-16' /></div>
           </div>
           <div className=' w-[75vw] h-full bg-white flex items-center flex-wrap justify-center md:justify-start'>
             {upcomingEvents.map(event => (
@@ -55,10 +56,10 @@ const Events = () => {
           </div>
         </div>
 
-        <div className=' w-full flex  justify-between min-h-[42vh]  md:pl-12 md:flex-row flex-col '>
-          <div className=' flex flex-col '>
-            <h1 className=' md:text-4xl text-3xl text-[#3D004D] font-semibold mb-3'>All <br /> Events</h1>
-            <hr className=' border-[2.5px] border-[#3D004D] w-16' />
+        <div className=' w-full flex items-center justify-between min-h-[42vh]  md:pl-12  flex-col '>
+          <div className=' flex flex-col w-[80%]'>
+            <div className='w-full'><h1 className=' md:text-4xl text-3xl text-[#3D004D] font-semibold mb-3'>All <br /> Events</h1>
+            <hr className=' border-[2.5px] border-[#3D004D] w-16' /></div>
           </div>
 
           <div className=' w-[75vw] h-full bg-white flex items-center flex-wrap justify-center md:justify-start'>
