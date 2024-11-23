@@ -13,6 +13,7 @@ const EventsDetails = () => {
     const [details, setDetails] = useState(null);
     const navigate = useNavigate();
     const [ticketQuantity, setTicketQuantity] = useState(1);
+    const [isBought, setIsBought] = useState(false);
 
     const fetchEventDetails = async () => {
         const response = await axios.get(
@@ -23,94 +24,152 @@ const EventsDetails = () => {
         } else alert(response.data.message);
     };
 
+    const checkTicketBought = async () => {
+        console.log({
+            user_id: localStorage.getItem('user_id'),
+            event_id: eventID
+        })
+        const response = await axios.post(`${import.meta.env.VITE_API_URL}/ticket/check-ticket-bought/`, {
+            user_id: localStorage.getItem('user_id'),
+            event_id: eventID
+        })
+
+        setIsBought(response.data.status);
+        if (response.data.status === null && response.data.success === false) {
+            alert(response.data.message);
+        }
+    }
+
     useEffect(() => {
         fetchEventDetails();
+        checkTicketBought()
     }, []);
 
     return (
-        <section className="w-screen min-h-screen">
+        <section className="w-screen min-h-screen bg-gray-50">
             <Nav />
             {details && (
-                <>
-                    <div className="w-full h-screen relative bg-black flex items-center md:px-12 px-6">
+                <div style={{
+                    marginTop: "75px"
+                }} className="container mx-auto px-6">
+                    {/* Event Poster Section */}
+                    <div className="relative">
                         <img
                             src={details.poster}
-                            alt=""
-                            className="absolute left-0 w-full h-full object-cover"
+                            alt="Event Poster"
+                            className="w-full h-96 object-cover rounded-lg shadow-lg"
                         />
-
-                        <svg
-                            xmlns="http://www.w3.org/2000/svg"
-                            className="divider-img-898043"
-                            viewBox="0 0 1080 137"
-                            preserveAspectRatio="none"
-                        >
-                            <path d="M 0,137 V 59.03716 c 158.97703,52.21241 257.17659,0.48065 375.35967,2.17167 118.18308,1.69101 168.54911,29.1665 243.12679,30.10771 C 693.06415,92.25775 855.93515,29.278599 1080,73.61449 V 137 Z"></path>
-                            <path
-                                d="M 0,10.174557 C 83.419822,8.405668 117.65911,41.78116 204.11379,44.65308 290.56846,47.52499 396.02558,-7.4328 620.04248,94.40134 782.19141,29.627636 825.67279,15.823104 1080,98.55518 V 137 H 0 Z"
-                                className="opacity-50"
-                            ></path>
-                            <path
-                                d="M 0,45.10182 C 216.27861,-66.146913 327.90348,63.09813 416.42665,63.52904 504.94982,63.95995 530.42054,22.125806 615.37532,25.210412 700.33012,28.295019 790.77619,132.60682 1080,31.125744 V 137 H 0 Z"
-                                className="opacity-25"
-                            ></path>
-                        </svg>
                     </div>
 
-                    <div className="z-10 w-full flex md:flex-row flex-col h-full md:px-12 px-6 py-5">
+                    {/* Event Information Section */}
+                    <div className="mt-10 md:flex md:gap-12">
                         <div className="md:w-2/3 w-full">
-                            <div>
-                                <h1 className="md:text-8xl text-6xl font-semibold text-[#E167FF] qwigley-regular mb-3">
-                                    {details.name}
-                                </h1>
-                                <p className="text-xl">{details.description}</p>
-                            </div>
+                            <h1 className="text-4xl font-semibold text-[#E167FF] mb-3">
+                                {details.name}
+                            </h1>
+                            <p className="text-lg text-gray-700 mb-8">{details.description}</p>
 
-                            <div className="flex gap-10 flex-col mt-10">
-                                <div className="flex gap-5 items-center opacity-90">
-                                    <VscOrganization size={35} />
-                                    <h1 className="text-2xl font-semibold">
-                                        {details.organizer.username}
-                                    </h1>
+                            <div className="space-y-6">
+                                {/* Organizer */}
+                                <div className="flex items-center gap-4 text-gray-600">
+                                    <VscOrganization size={28} />
+                                    <h2 className="text-xl font-medium">{details.organizer.username}</h2>
                                 </div>
 
-                                <div className="flex gap-5 items-center opacity-90">
-                                    <FaRegCalendar size={35} />
-                                    <h1 className="text-2xl font-semibold">
+                                {/* Date */}
+                                <div className="flex items-center gap-4 text-gray-600">
+                                    <FaRegCalendar size={28} />
+                                    <h2 className="text-xl font-medium">
                                         {new Date(details.date).toLocaleDateString("en-US", {
                                             year: "numeric",
                                             month: "long",
                                             day: "numeric",
                                         })}
-                                    </h1>
+                                    </h2>
                                 </div>
 
-                                <div className="flex gap-5 items-center opacity-90">
-                                    <IoLocationOutline size={35} />
-                                    <h1 className="text-2xl font-semibold">
-                                        {details.location}
-                                    </h1>
+                                {/* Location */}
+                                <div className="flex items-center gap-4 text-gray-600">
+                                    <IoLocationOutline size={28} />
+                                    <h2 className="text-xl font-medium">{details.location}</h2>
                                 </div>
 
-                                {/* Price Section */}
-                                <div className="flex gap-5 items-center mt-5 opacity-90 border p-5 rounded-lg border-[#E167FF] w-fit">
-                                    <h2 className="text-xl ">Ticket Price:</h2>
-                                    <h1 className="text-4xl font-bold text-[#E167FF]">
+                                {/* Ticket Price */}
+                                <div className="flex items-center gap-4 text-gray-600 mt-4 p-4 border rounded-lg">
+                                    <h2 className="text-xl">Ticket Price:</h2>
+                                    <h1 className="text-3xl font-bold text-[#E167FF]">
                                         ${details.price}
                                     </h1>
                                 </div>
                             </div>
                         </div>
 
-                        <div className="md:w-1/3 w-full flex flex-col gap-8 md:px-8 py-12 md:border-l-2 md:border-black/30">
-                            <RegisterForm
-                                details={details}
-                                ticketQuantity={ticketQuantity}
-                                setTicketQuantity={setTicketQuantity}
-                            />
+                        {/* Registration or Event Management Section */}
+                        <div className="md:w-1/3 w-full mt-8 md:mt-0 md:border-l-2 md:border-gray-300 pl-8">
+                            {details.organizer._id === localStorage.getItem("user_id") ? (
+                                <div>
+                                    {/* Analytics for Organizers */}
+                                    <h3 className="text-2xl font-semibold text-gray-800 mb-6">
+                                        Event Analytics
+                                    </h3>
+
+                                    <div className="space-y-4">
+                                        {/* Ticket Sales Overview */}
+                                        <div>
+                                            <h4 className="text-lg font-medium text-gray-700">Ticket Overview</h4>
+                                            <p>
+                                                <strong>Total Tickets:</strong> {details.limit}
+                                            </p>
+                                            <p>
+                                                <strong>Tickets Sold:</strong> {details.tickets.length}
+                                            </p>
+                                            <p>
+                                                <strong>Tickets Remaining:</strong>{" "}
+                                                {details.limit - details.tickets.length}
+                                            </p>
+                                        </div>
+
+                                        {/* Financial Overview */}
+                                        <div>
+                                            <h4 className="text-lg font-medium text-gray-700">Financial Overview</h4>
+                                            <p>
+                                                <strong>Price per Ticket:</strong> ${details.price}
+                                            </p>
+                                            <p>
+                                                <strong>Total Sales:</strong> $
+                                                {details.price * details.tickets.length}
+                                            </p>
+                                        </div>
+
+                                        {/* Action Buttons */}
+                                        <div className="space-x-4 mt-6">
+                                            <button className="bg-blue-500 text-white p-3 rounded-lg">
+                                                Edit Event
+                                            </button>
+                                            <button className="bg-green-500 text-white p-3 rounded-lg">
+                                                Manage Tickets
+                                            </button>
+                                        </div>
+                                    </div>
+                                </div>
+                            ) : (
+
+                                <>
+                                    {isBought != null && isBought === true ? (<>
+                                        View ticket
+                                    </>) : (<>
+                                        <RegisterForm
+                                            details={details}
+                                            ticketQuantity={ticketQuantity}
+                                            setTicketQuantity={setTicketQuantity}
+                                        />
+                                    </>)}
+                                </>
+
+                            )}
                         </div>
                     </div>
-                </>
+                </div>
             )}
         </section>
     );

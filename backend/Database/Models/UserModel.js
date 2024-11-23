@@ -14,9 +14,8 @@ const UserSchema = new mongoose.Schema({
         type : String
     },
     stripe_id : {
-        type : String,
-        required : true
-    },
+        type : String
+        },
     timeStamp : {
         type : Date,
         default : Date.now,

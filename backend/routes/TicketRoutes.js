@@ -6,30 +6,30 @@ const sendEmail = require('../service/emailSender');
 
 const TicketRoutes = require('express').Router();
 
-TicketRoutes.post('/request-ticket', async(req,res) => {
-    
-    try{
-        const {event, customer} = req.body;
-    
+TicketRoutes.post('/request-ticket', async (req, res) => {
+
+    try {
+        const { event, customer } = req.body;
+
         const Ticket = new TicketModel({
-            event : event,
-            customer : customer,
-            status : 'requested'
+            event: event,
+            customer: customer,
+            status: 'requested'
         })
-    
+
         await Ticket.save();
-    
+
         res.json({
-            message : "Ticket requested",
-            ticket : Ticket,
-            success : true
+            message: "Ticket requested",
+            ticket: Ticket,
+            success: true
         })
     }
-    catch(error){
+    catch (error) {
         console.log(error);
         res.json({
-            success : false,
-            message : "Error"
+            success: false,
+            message: "Error"
         })
     }
 })
@@ -66,10 +66,10 @@ TicketRoutes.post('/create-ticket', async (req, res) => {
 
         //update the attandee in events
         const event = await EventModel.findById(eventID);
-        if(!event){
+        if (!event) {
             return res.json({
-                success : false,
-                message : "Event not found"
+                success: false,
+                message: "Event not found"
             })
         }
         event.tickets.push(ticket._id);
@@ -125,11 +125,11 @@ TicketRoutes.post('/approve-ticket', async (req, res) => {
             { status: "approved" },
             { new: true } // This option returns the updated document
         )
-        .populate({
-            path: 'event',
-            populate: { path: 'organizer', model: 'user' } // Populate the organizer in the event as well
-        })
-        .populate('customer'); // Populate the customer directly
+            .populate({
+                path: 'event',
+                populate: { path: 'organizer', model: 'user' } // Populate the organizer in the event as well
+            })
+            .populate('customer'); // Populate the customer directly
 
         // Check if the ticket was found and updated
         if (!updatedTicket) {
@@ -149,7 +149,7 @@ TicketRoutes.post('/approve-ticket', async (req, res) => {
         // Generate a QR code from the ticket details
         const qrCodeDataUrl = await QRCode.toDataURL(ticketDetails);
 
-        await sendEmail(customer.email, "Ticket Approved", "",`
+        await sendEmail(customer.email, "Ticket Approved", "", `
                 <h3>Your Ticket for ${event.name}</h3>
                 <p>Dear ${customer.username},</p>
                 <p>Congratulations! Your ticket has been approved. Below are the event details:</p>
@@ -175,25 +175,56 @@ TicketRoutes.post('/approve-ticket', async (req, res) => {
     }
 });
 
-TicketRoutes.get('/bought/:customerID', async(req,res) => {
-    const {customerID} = req.params;
+TicketRoutes.get('/bought/:customerID', async (req, res) => {
+    const { customerID } = req.params;
     try {
-        const BoughtTickets = await TicketModel.find({
-            customer : customerID
-        }).populate('event')
-        .populate('customer')
+        const BoughtTickets = await TicketModel.find({ customer: customerID })
+            .populate('event')  // Populate event
+            .populate('customer')  // Populate customer
+            .populate({
+                path: 'event',
+                populate: {
+                    path: 'organizer',  // Make sure this references 'user' model
+                    model: 'user'  // The model name should be 'user' (as in the schema reference)
+                }
+            });
 
         res.json({
             success: true,
             boughtTickets: BoughtTickets
-        })
-    }
-    catch(error){
+        });
+    } catch (error) {
         return res.json({
             success: false,
             message: "Error fetching tickets",
             error: error.message
+        });
+    }
+});
+
+TicketRoutes.post('/check-ticket-bought', async (req, res) => {
+    try {
+        const { user_id, event_id } = req.body;
+        const ticket =await TicketModel.findOne({
+            event: event_id,
+            customer: user_id
         })
+        //console.log(user_id, event_id);
+        //console.log(ticket)
+        if (ticket) {
+            res.json({ status: true, message: "Ticket already bought" })
+        }
+        else {
+            res.json({ status: false, message: "Ticket not bought" })
+        }
+    }
+    catch (error) {
+        console.error("Error checking ticket bought:", error);
+        return res.json({
+            status : null,
+            message: error.message,
+            success: false
+        });
     }
 })
 

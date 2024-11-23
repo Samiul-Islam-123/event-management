@@ -14,6 +14,7 @@ const getStripe = () => {
 
 const RegisterForm = ({ details, ticketQuantity, setTicketQuantity }) => {
     const { user } = useUser();
+    console.log(user)
 
     const [formData, setFormData] = useState({
         username: user.fullName ? user.fullName : "",
@@ -114,7 +115,7 @@ const RegisterForm = ({ details, ticketQuantity, setTicketQuantity }) => {
                     />
                 </label>
 
-                <label className="text-xl font-medium flex flex-col">
+                {/* <label className="text-xl font-medium flex flex-col">
                     Contact Number
                     <input
                         type="tel"
@@ -124,7 +125,7 @@ const RegisterForm = ({ details, ticketQuantity, setTicketQuantity }) => {
                         required
                         className="w-full px-4 py-2 mt-2 border rounded-md focus:outline-none focus:ring-2 focus:ring-[#E167FF]"
                     />
-                </label>
+                </label> */}
 
                 <div className="text-xl font-medium flex flex-col">
                     Number of Tickets
