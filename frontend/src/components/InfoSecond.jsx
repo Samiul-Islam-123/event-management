@@ -2,12 +2,15 @@ import React, { useEffect, useRef } from "react";
 import gsap from "gsap";
 import { ScrollTrigger } from "gsap/ScrollTrigger";
 import img3 from '../assets/image3.jpg'
+import { useData } from "../context/DataContext";
 
 gsap.registerPlugin(ScrollTrigger);
 
 const InfoSecond = () => {
     const box1Ref = useRef(null);
     const box2Ref = useRef(null);
+
+    const {defaultTexts} = useData();
 
     useEffect(() => {
        
@@ -64,36 +67,23 @@ const InfoSecond = () => {
     return (
         <section className=" info2 w-full min-h-screen md:px-12 px-8 md:pt-10 pt-32 flex flex-col items-center">
             <h1 className=" text-[7.3vw] font-black bg-gradient-to-b from-black  to-white inline-block text-transparent bg-clip-text h-fit opacity-30">
-                PARTICIPATE WITH US
+                {defaultTexts.infoSecond.title}
             </h1>
 
             <div className="  flex w-full justify-center  flex-wrap md:gap-32 items-center mt-8 md:mt-14">
                 <div className="flex flex-col w-[80vw] md:w-[30vw]">
                     <div className=" mb-8 md:mb-14 ">
                         <h1 className="text-4xl md:text-5xl font-semibold">
-                            Bringing <span className=" text-[#E167FF]">people{" "}</span>
+                        {defaultTexts.infoSecond.subtitle[0]} <span className=" text-[#E167FF]">{defaultTexts.infoSecond.subtitle[1]}{" "}</span>
                         </h1>
                         <h1 className="text-4xl md:text-5xl font-semibold">
-                            together
+                        {defaultTexts.infoSecond.subtitle[2]}
                         </h1>
                     </div>
 
                     <div>
                         <p className=" text-sm md:text-lg">
-                            Experience the pinnacle of culture, elegance,
-                            entertainment, gastronomy and dining at Les Sorties
-                            de Diane. This exceptional series of events
-                            showcases the talents of renowned artists and
-                            performers and immerses you in the world of art,
-                            music, literature and gastronomy. Prepare to be
-                            captivated by captivating exhibitions and
-                            captivating performances held in exclusive venues,
-                            creating an intimate and enchanting atmosphere. Each
-                            event is a unique experience, one that inspires you
-                            and leaves you wanting more. Indulge in the beauty
-                            of the arts and join us at Les Sorties de Diane for
-                            unforgettable evenings that will ignite your
-                            passion.
+                           {defaultTexts.infoSecond.description}
                         </p>
                     </div>
                 </div>

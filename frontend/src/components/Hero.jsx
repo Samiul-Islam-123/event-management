@@ -5,10 +5,12 @@ import { gsap } from "gsap";
 import Carousel from "./ui/Carousel";
 import Nav from "./Nav";
 import { useNavigate } from "react-router-dom";
+import { useData } from "../context/DataContext";
 
 const Hero = () => {
     
     const navigate = useNavigate();
+    const {defaultTexts, setDefaultTexts} = useData();
     
     return (
         <>
@@ -22,10 +24,10 @@ const Hero = () => {
             <div className="absolute bottom-20 left-12 flex flex-col text-white">
                 <div className="mb-12">
                     <h1 className="md:text-8xl text-6xl font-semibold">
-                        Live the moment,
+                        {defaultTexts.hero.title[0]}{/**Live the moment, */}
                     </h1>
                     <h1 className="md:text-8xl text-6xl font-semibold">
-                        Love the <span className="text-[#E167FF]">experience.</span>
+                        {defaultTexts.hero.title[1]} <span className="text-[#E167FF]">{defaultTexts.hero.title[2]}</span>{/**Love the experience. */}
                     </h1>
                 </div>
                 <div onClick={()=>{
@@ -33,7 +35,7 @@ const Hero = () => {
                 }} style={{
                     cursor : "pointer"
                 }} className="border-white text-white border-2 font-semibold rounded-lg px-10 py-6 w-fit flex items-center gap-2  hover:gap-5 hover:shadow-[0_8px_16px_rgba(0,0,0,0.2),0_-8px_16px_rgba(0,0,0,0.2)]  hover:bg-black/20  hover:shadow-white/40  transition-all ease-in-out duration-500">
-                    <h1 className="text-xl">All Events</h1>
+                    <h1 className="text-xl">{defaultTexts.hero.ctaButton}</h1>{/**All events */}
                     <FaArrowRightLong color="white"  />
                 </div>
             </div>

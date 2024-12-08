@@ -6,6 +6,7 @@ import { useNavigate } from "react-router-dom";
 import CustomUserButton from "./ui/CustomUserButton";
 import gsap from "gsap";
 import { ScrollTrigger } from "gsap/ScrollTrigger";
+import { useData } from "../context/DataContext";
 
 gsap.registerPlugin(ScrollTrigger);
 
@@ -14,6 +15,7 @@ const Nav = () => {
     const navigate = useNavigate();
     const navRef = useRef(null);
     const [isMenuOpen, setIsMenuOpen] = useState(false);
+    const { defaultTexts, setDefaultTexts } = useData();
 
     useEffect(() => {
         ScrollTrigger.create({
@@ -35,50 +37,52 @@ const Nav = () => {
             <div onClick={() => {
                 navigate('/');
             }} className="logo qwigley-regular text-2xl md:text-4xl" style={{
-                cursor : "pointer"
+                cursor: "pointer"
             }}>
-                <h2>Les sorties de Diane</h2>
+                <h2>{defaultTexts.nav.logo}</h2>
             </div>
 
-                {/* Hamburger Icon for Mobile */}
-                <button className="md:hidden text-white text-3xl" onClick={toggleMenu}>
-                    {isMenuOpen ? <RiCloseLine /> : <RiMenu3Line />}
-                </button>
+            {/* Hamburger Icon for Mobile */}
+            <button className="md:hidden text-white text-3xl" onClick={toggleMenu}>
+                {isMenuOpen ? <RiCloseLine /> : <RiMenu3Line />}
+            </button>
 
-                {/* Overlay for Dark Background when Menu is Open */}
-                {isMenuOpen && (
-                    <div 
-                        className="fixed inset-0 bg-black/50 z-40" 
-                        onClick={toggleMenu} // close menu when clicking outside the sidebar
-                    ></div>
-                )}
-
-                {/* Sidebar Drawer */}
+            {/* Overlay for Dark Background when Menu is Open */}
+            {isMenuOpen && (
                 <div
-                    className={`fixed top-0 right-0 h-full w-64 bg-[#0c0311] text-white transform ${
-                        isMenuOpen ? "translate-x-0" : "translate-x-full"
-                    } transition-transform duration-300 ease-in-out md:hidden z-50`}
-                >
-                    <div className="flex items-center justify-between px-6 py-4 border-b border-gray-700">
-                        {/* Profile Icon */}
-                        <div className="profile h-10 w-10 rounded-full bg-black/40 flex items-center justify-center">
-                            {isSignedIn ? (
-                                <CustomUserButton />
-                            ) : (
-                                <FaUserAlt />
-                            )}
-                        </div>
+                    className="fixed inset-0 bg-black/50 z-40"
+                    onClick={toggleMenu} // close menu when clicking outside the sidebar
+                ></div>
+            )}
 
-                        {/* Close Icon */}
-                        <button onClick={toggleMenu} className="text-2xl text-white">
-                            <RiCloseLine />
-                        </button>
+            {/* Sidebar Drawer */}
+            <div
+                className={`fixed top-0 right-0 h-full w-64 bg-[#0c0311] text-white transform ${isMenuOpen ? "translate-x-0" : "translate-x-full"
+                    } transition-transform duration-300 ease-in-out md:hidden z-50`}
+            >
+                <div className="flex items-center justify-between px-6 py-4 border-b border-gray-700">
+                    {/* Profile Icon */}
+                    <div className="profile h-10 w-10 rounded-full bg-black/40 flex items-center justify-center">
+                        {isSignedIn ? (
+                            <CustomUserButton />
+                        ) : (
+                            <FaUserAlt />
+                        )}
                     </div>
 
-                    {/* Menu Items */}
-                    <ul className="flex flex-col gap-6 font-semibold text-lg px-6 mt-8">
-                        <li className="cursor-pointer" onClick={() => setIsMenuOpen(false)}>Home</li>
-                        <li className="events relative inline-block cursor-pointer" onClick={() => setIsMenuOpen(false)}>
+                    {/* Close Icon */}
+                    <button onClick={toggleMenu} className="text-2xl text-white">
+                        <RiCloseLine />
+                    </button>
+                </div>
+
+                {/* Menu Items for mobo*/}
+                <ul className="flex flex-col gap-6 font-semibold text-lg px-6 mt-8">
+                    <li className="cursor-pointer" onClick={() => {
+                        setIsMenuOpen(false)
+                        navigate('/')
+                    }}>{defaultTexts.nav.menuItems[0]}</li>
+                    {/* <li className="events relative inline-block cursor-pointer" onClick={() => setIsMenuOpen(false)}>
                             <button className="flex gap-1 items-center">
                                 Events <RiArrowDropDownLine size={26} />
                             </button>
@@ -87,45 +91,57 @@ const Nav = () => {
                                 <a href="#" className="block px-4 py-2 md:hover:bg-blue-100 border-b-[1px]">Upcoming Events</a>
                                 <a href="#" className="block px-4 py-2 md:hover:bg-blue-100 border-b-[1px]">Featured Events</a>
                             </div>
-                        </li>
-                        <li className="cursor-pointer" onClick={() => setIsMenuOpen(false)}>Contact</li>
-                    </ul>
-                </div>
-
-                {/* Desktop Menu */}
-                <ul className="hidden md:flex gap-10 font-semibold text-lg">
-                    <li style={{
-                    cursor : "pointer"
-                }} onClick={() => {
-                navigate('/');
-            }}>Home</li>
-                    <li className="events relative inline-block">
-                        <button className="text-white focus:outline-none flex gap-1 items-center">
-                            Events <RiArrowDropDownLine size={26} />
-                        </button>
-                        <div className="event-dropdown absolute hidden space-y-1 bg-white rounded shadow-lg w-36 group-hover:block">
-                            <a href="/app/events" className="block px-4 py-2 text-gray-800 hover:bg-blue-100">All Events</a>
-                            <a href="#" className="block px-4 py-2 text-gray-800 hover:bg-blue-100">Upcoming Events</a>
-                            <a href="#" className="block px-4 py-2 text-gray-800 hover:bg-blue-100">Featured Events</a>
-                        </div>
-                    </li>
-                    <li style={{
-                        cursor : "pointer"
-                    }} onClick={() => {
+                        </li> */}
+                    <li className="cursor-pointer" onClick={() => {
+                        setIsMenuOpen(false)
+                        navigate('/app/events')
+                    }}>{defaultTexts.nav.menuItems[1]}</li>
+                    <li className="cursor-pointer" onClick={() => {
+                        setIsMenuOpen(false)
                         navigate('/contact-us')
-                    }}>Contact</li>
+                    }}>{defaultTexts.nav.menuItems[2]}</li>
                 </ul>
+            </div>
 
-                {/* Profile Icon for Desktop */}
-                <div className="profile h-10 w-10 rounded-full bg-black/40 hidden md:flex items-center justify-center">
-                    {isSignedIn ? (
-                        <CustomUserButton />
-                    ) : (
-                        <FaUserAlt />
-                    )}
-                </div>
-            </nav>
-        
+            {/* Desktop Menu */}
+            <ul className="hidden md:flex gap-10 font-semibold text-lg">
+                <li style={{
+                    cursor: "pointer"
+                }} onClick={() => {
+                    navigate('/');
+                }}>{defaultTexts.nav.menuItems[0]}</li>
+                {/* <li className="events relative inline-block">
+                    <button className="text-white focus:outline-none flex gap-1 items-center">
+                        Events <RiArrowDropDownLine size={26} />
+                    </button>
+                    <div className="event-dropdown absolute hidden space-y-1 bg-white rounded shadow-lg w-36 group-hover:block">
+                        <a href="/app/events" className="block px-4 py-2 text-gray-800 hover:bg-blue-100">All Events</a>
+                        <a href="#" className="block px-4 py-2 text-gray-800 hover:bg-blue-100">Upcoming Events</a>
+                        <a href="#" className="block px-4 py-2 text-gray-800 hover:bg-blue-100">Featured Events</a>
+                    </div>
+                </li> */}
+                <li style={{
+                    cursor: "pointer"
+                }} onClick={() => {
+                    navigate('/app/events')
+                }}>{defaultTexts.nav.menuItems[1]}</li>
+                <li style={{
+                    cursor: "pointer"
+                }} onClick={() => {
+                    navigate('/contact-us')
+                }}>{defaultTexts.nav.menuItems[2]}</li>
+            </ul>
+
+            {/* Profile Icon for Desktop */}
+            <div className="profile h-10 w-10 rounded-full bg-black/40 hidden md:flex items-center justify-center">
+                {isSignedIn ? (
+                    <CustomUserButton />
+                ) : (
+                    <FaUserAlt />
+                )}
+            </div>
+        </nav>
+
     );
 };
 

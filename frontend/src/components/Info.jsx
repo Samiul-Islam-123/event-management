@@ -1,17 +1,19 @@
-import React, { useEffect, useRef } from "react";
+import React, { useEffect, useRef, useState } from "react";
 import gsap from "gsap";
 import { ScrollTrigger } from "gsap/ScrollTrigger";
 import img1 from "../assets/image1.jpg";
 import img2 from "../assets/image2.jpg";
+import { useData } from "../context/DataContext";
 
 gsap.registerPlugin(ScrollTrigger);
 
 const Info = () => {
     const img1Ref = useRef(null);
     const img2Ref = useRef(null);
+    const { defaultTexts } = useData();
 
     useEffect(() => {
-       
+
         gsap.fromTo(
             [img1Ref.current],
             {
@@ -32,7 +34,7 @@ const Info = () => {
                     start: "top center",
                     end: "60% center",
                     scrub: 5,
-                    
+
                 },
             }
         );
@@ -57,7 +59,7 @@ const Info = () => {
                     start: "top center",
                     end: "60% center",
                     scrub: 5,
-                    
+
                 },
             }
         );
@@ -66,7 +68,7 @@ const Info = () => {
     return (
         <section className="info w-full min-h-screen">
             <div className="w-full h-[12vh] border-[#3D004D] border flex items-center justify-center qwigley-regular text-2xl md:text-5xl text-[#3D004D]">
-                <h1>Welcome everyone to Diane's outings</h1>
+                <h1>{defaultTexts.info.welcome}</h1>{/**Welcome everyone to Diane's outings */}
             </div>
 
             <div className="flex w-full justify-center h-[88vh] flex-wrap md:gap-32 items-center">
@@ -87,27 +89,20 @@ const Info = () => {
                 </div>
 
                 <div className="flex flex-col w-[80vw] md:w-[30vw]">
+                    {/**We inspire
+                        people to go out more */}
                     <div className="mb-8 md:mb-14">
                         <h1 className="text-4xl md:text-5xl font-semibold">
-                            We <span className="text-[#E167FF]">inspire</span>
+                            {defaultTexts.info.title[0]} <span className="text-[#E167FF]">{defaultTexts.info.title[1]}</span>
                         </h1>
                         <h1 className="text-4xl md:text-5xl font-semibold">
-                            people to go out more
+                            {defaultTexts.info.title[2]}
                         </h1>
                     </div>
 
                     <div>
                         <p className="text-sm md:text-lg">
-                            Diane’s Nights Out is a series of exceptional events that promise
-                            unforgettable evenings filled with culture, elegance, and
-                            entertainment. Immerse yourself in the world of art, music, and
-                            literature as Diane’s Nights Out showcases the talents of renowned
-                            artists and performers. Our carefully selected events take place
-                            in exclusive venues, creating an intimate and enchanting
-                            atmosphere for you to enjoy. From captivating exhibitions to
-                            captivating performances, each event is a unique experience that
-                            will leave you inspired and wanting more. Join us at Diane’s
-                            Nights Out and indulge in the beauty of the arts.
+                            {defaultTexts.info.description}
                         </p>
                     </div>
                 </div>

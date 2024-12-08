@@ -1,8 +1,12 @@
 import React, { useState } from 'react';
 import axios from 'axios';
 import Nav from '../../components/Nav';
+import { useData } from '../../context/DataContext';
 
 function ContactPage() {
+  const { defaultTexts } = useData();
+  const { contactPage } = defaultTexts;
+
   const [formData, setFormData] = useState({ name: '', email: '', message: '' });
   const [errors, setErrors] = useState({});
   const [success, setSuccess] = useState('');
@@ -10,13 +14,13 @@ function ContactPage() {
 
   const validateForm = () => {
     const newErrors = {};
-    if (!formData.name.trim()) newErrors.name = 'Name is required.';
+    if (!formData.name.trim()) newErrors.name = contactPage.form.name.error;
     if (!formData.email.trim()) {
-      newErrors.email = 'Email is required.';
+      newErrors.email = contactPage.form.email.error;
     } else if (!/\S+@\S+\.\S+/.test(formData.email)) {
-      newErrors.email = 'Please enter a valid email.';
+      newErrors.email = contactPage.form.email.invalidError;
     }
-    if (!formData.message.trim()) newErrors.message = 'Message cannot be empty.';
+    if (!formData.message.trim()) newErrors.message = contactPage.form.message.error;
     setErrors(newErrors);
     return Object.keys(newErrors).length === 0;
   };
@@ -24,7 +28,7 @@ function ContactPage() {
   const handleChange = (e) => {
     const { name, value } = e.target;
     setFormData({ ...formData, [name]: value });
-    setErrors({ ...errors, [name]: '' }); // Clear error for the field being updated
+    setErrors({ ...errors, [name]: '' });
   };
 
   const handleSubmit = async (e) => {
@@ -36,11 +40,11 @@ function ContactPage() {
       setSuccess('');
       const response = await axios.post(`${import.meta.env.VITE_API_URL}/feedback`, formData);
       if (response.status === 200 || response.status === 201) {
-        setSuccess('Thank you for your feedback! We will get back to you soon.');
-        setFormData({ name: '', email: '', message: '' }); // Clear the form
+        setSuccess(contactPage.successMessage);
+        setFormData({ name: '', email: '', message: '' });
       }
     } catch (error) {
-      setErrors({ api: 'Something went wrong. Please try again later.' });
+      setErrors({ api: contactPage.apiError });
     } finally {
       setLoading(false);
     }
@@ -50,7 +54,7 @@ function ContactPage() {
     <div className="min-h-screen flex items-center justify-center bg-gradient-to-br from-gray-800 via-gray-700 to-gray-900">
       <div className="bg-white shadow-lg rounded-lg p-8 w-full max-w-lg">
         <Nav />
-        <h2 className="text-3xl font-bold text-gray-800 mb-6 text-center">Contact Us</h2>
+        <h2 className="text-3xl font-bold text-gray-800 mb-6 text-center">{contactPage.title}</h2>
         <form className="space-y-6" onSubmit={handleSubmit}>
           {errors.api && (
             <p className="text-red-600 text-center text-sm">{errors.api}</p>
@@ -60,7 +64,7 @@ function ContactPage() {
           )}
           <div>
             <label htmlFor="name" className="block text-sm font-medium text-gray-700">
-              Name
+              {contactPage.form.name.label}
             </label>
             <input
               type="text"
@@ -68,7 +72,7 @@ function ContactPage() {
               name="name"
               value={formData.name}
               onChange={handleChange}
-              placeholder="Your Name"
+              placeholder={contactPage.form.name.placeholder}
               className={`mt-1 block w-full p-3 border ${
                 errors.name ? 'border-red-600' : 'border-gray-300'
               } rounded-lg shadow-sm focus:ring-blue-500 focus:border-blue-500`}
@@ -79,7 +83,7 @@ function ContactPage() {
           </div>
           <div>
             <label htmlFor="email" className="block text-sm font-medium text-gray-700">
-              Email
+              {contactPage.form.email.label}
             </label>
             <input
               type="email"
@@ -87,7 +91,7 @@ function ContactPage() {
               name="email"
               value={formData.email}
               onChange={handleChange}
-              placeholder="Your Email"
+              placeholder={contactPage.form.email.placeholder}
               className={`mt-1 block w-full p-3 border ${
                 errors.email ? 'border-red-600' : 'border-gray-300'
               } rounded-lg shadow-sm focus:ring-blue-500 focus:border-blue-500`}
@@ -98,7 +102,7 @@ function ContactPage() {
           </div>
           <div>
             <label htmlFor="message" className="block text-sm font-medium text-gray-700">
-              Message
+              {contactPage.form.message.label}
             </label>
             <textarea
               id="message"
@@ -106,7 +110,7 @@ function ContactPage() {
               rows="4"
               value={formData.message}
               onChange={handleChange}
-              placeholder="Your Message"
+              placeholder={contactPage.form.message.placeholder}
               className={`mt-1 block w-full p-3 border ${
                 errors.message ? 'border-red-600' : 'border-gray-300'
               } rounded-lg shadow-sm focus:ring-blue-500 focus:border-blue-500`}
@@ -122,7 +126,7 @@ function ContactPage() {
             }`}
             disabled={loading}
           >
-            {loading ? 'Sending...' : 'Send Message'}
+            {loading ? contactPage.form.submitButton.loading : contactPage.form.submitButton.default}
           </button>
         </form>
       </div>
@@ -131,3 +135,4 @@ function ContactPage() {
 }
 
 export default ContactPage;
+

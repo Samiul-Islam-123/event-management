@@ -1,35 +1,35 @@
 import React, { useState, useEffect } from 'react';
-import axios from 'axios'; // Import Axios
-import EventCard from '../../components/ui/EventCard'; // Assuming we're using the same EventCard component
+import axios from 'axios';
+import EventCard from '../../components/ui/EventCard';
 import { useUser } from '@clerk/clerk-react';
 import CreateEventForm from '../../components/CreateEventForm';
-import Modal from '../../components/ui/Modal'; // Import the Modal component
+import Modal from '../../components/ui/Modal';
 import Nav from '../../components/Nav';
 import Cookies from "js-cookie";
 import Ticket from '../../components/ui/Ticket';
+import { useData } from '../../context/DataContext';
 
 function ProfilePage() {
+  const { defaultTexts } = useData();
+  const { profilePage } = defaultTexts;
   const { user } = useUser();
-  const [isCreatingEvent, setIsCreatingEvent] = useState(false); // State to manage the visibility of CreateEventForm
-  const [createdEvents, setCreatedEvents] = useState([]); // State to store events created by the user
-  const [boughtTickets, setBoughtTickets] = useState(null); // State to store tickets bought by the user
-  const [activeTab, setActiveTab] = useState('events'); // State for tab navigation
+  const [isCreatingEvent, setIsCreatingEvent] = useState(false);
+  const [createdEvents, setCreatedEvents] = useState([]);
+  const [boughtTickets, setBoughtTickets] = useState(null);
+  const [activeTab, setActiveTab] = useState('events');
 
-  // Fetch created events
   const fetchCreatedEvents = async () => {
     try {
       const response = await axios.get(`${import.meta.env.VITE_API_URL}/event/my-events/${Cookies.get('user_id')}`);
-      setCreatedEvents(response.data.events); // Update state with the fetched events
+      setCreatedEvents(response.data.events);
     } catch (error) {
       console.error('Error fetching created events:', error);
     }
   };
 
-  // Fetch bought tickets
   const fetchBoughtTickets = async () => {
     try {
       const response = await axios.get(`${import.meta.env.VITE_API_URL}/ticket/bought/${localStorage.getItem('user_id')}`);
-      
       setBoughtTickets(response.data.boughtTickets);
     } catch (error) {
       console.error('Error fetching bought tickets:', error);
@@ -54,64 +54,61 @@ function ProfilePage() {
           <h1 className="text-3xl font-bold mb-2">{user.fullName}</h1>
           <p className="text-gray-600 mb-1">{user.emailAddresses[0].emailAddress}</p>
           <button
-            onClick={() => setIsCreatingEvent(true)} // Show the CreateEventForm form
+            onClick={() => setIsCreatingEvent(true)}
             className="px-4 py-2 mt-2 bg-purple-600 text-white rounded-lg hover:bg-purple-700 focus:outline-none focus:ring-2 focus:ring-purple-500 focus:ring-offset-2"
           >
-            Create New Event
+            {profilePage.createEventButton}
           </button>
         </div>
       </div>
 
-      {/* Modal for CreateEventForm */}
       <Modal isOpen={isCreatingEvent} onClose={() => setIsCreatingEvent(false)}>
-        <CreateEventForm onCancel={() => setIsCreatingEvent(false)} /> {/* Pass the cancel handler */}
+        <CreateEventForm onCancel={() => setIsCreatingEvent(false)} />
       </Modal>
 
-      {/* Tab Navigation */}
       <div className="flex justify-center space-x-4 mb-8 border-b">
         <button
           onClick={() => setActiveTab('events')}
           className={`px-4 py-2 ${activeTab === 'events' ? 'border-b-2 border-purple-600 text-purple-600' : 'text-gray-600'}`}
         >
-          Events Created by Me
+          {profilePage.tabs.events}
         </button>
         <button
           onClick={() => setActiveTab('tickets')}
           className={`px-4 py-2 ${activeTab === 'tickets' ? 'border-b-2 border-purple-600 text-purple-600' : 'text-gray-600'}`}
         >
-          Tickets Bought
+          {profilePage.tabs.tickets}
         </button>
       </div>
 
-      {/* Tab Content */}
       <div>
         {activeTab === 'events' && (
           <div className="mb-8">
-            <h2 className="text-2xl font-semibold mb-4">Events Created by Me</h2>
+            <h2 className="text-2xl font-semibold mb-4">{profilePage.eventsSection.title}</h2>
             <div className="flex flex-wrap gap-6">
               {Array.isArray(createdEvents) && createdEvents.length > 0 ? (
                 createdEvents.map(event => (
                   <EventCard key={event.id} {...event} />
                 ))
               ) : (
-                <p>No events created yet.</p>
+                <p>{profilePage.eventsSection.noEvents}</p>
               )}
             </div>
           </div>
         )}
         {activeTab === 'tickets' && (
           <div>
-            <h2 className="text-2xl font-semibold mb-4">Tickets Bought</h2>
+            <h2 className="text-2xl font-semibold mb-4">{profilePage.ticketsSection.title}</h2>
             <div className="flex flex-wrap gap-2">
               {boughtTickets ? (
                 boughtTickets.map(ticket => (
-                  <>
-                  {console.log(ticket)}
-                  <Ticket data={ticket} />
-                  </>
+                  <React.Fragment key={ticket.id}>
+                    {console.log(ticket)}
+                    <Ticket data={ticket} />
+                  </React.Fragment>
                 ))
               ) : (
-                <p>No tickets bought yet.</p>
+                <p>{profilePage.ticketsSection.noTickets}</p>
               )}
             </div>
           </div>
@@ -122,3 +119,4 @@ function ProfilePage() {
 }
 
 export default ProfilePage;
+
