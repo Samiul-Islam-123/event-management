@@ -4,6 +4,9 @@ import PropTypes from 'prop-types';
 const DataContext = createContext();
 
 export function DataProvider({ children }) {
+  const [dynamicData, setDynamicData] = useState({});
+
+  const [language, setLanguage] = useState('en');
   const [defaultTexts, setDefaultTexts] = useState({
     nav: {
       logo: "Les sorties de Diane",
@@ -92,6 +95,29 @@ export function DataProvider({ children }) {
         noTickets: "No tickets bought yet."
       }
     },
+    eventCard: {
+      title: "Events",
+      organizedBy: "Organized By",
+      searchButton : "Search",
+      searchResults : "Search Results"
+    },
+    eventDetails: {
+      eventPosterAlt: "Event Poster",
+      eventanalytics : "Event Analytics",
+      ticketPriceLabel: "Ticket Price:",
+      ticketPrice: "$",
+      ticketsOverview: "Ticket Overview",
+      totalTickets: "Total Tickets:",
+      ticketsSold: "Tickets Sold:",
+      ticketsRemaining: "Tickets Remaining:",
+      financialOverview: "Financial Overview",
+      pricePerTicket: "Price per Ticket:",
+      totalSales: "Total Sales:",
+      editEventButton: "Edit Event",
+      manageTicketsButton: "Manage Tickets",
+      viewTicketButton: "View ticket",
+      registerButton: "Register for Event",
+    },
   });
 
   const flattenObject = (obj, prefix = "", result = {}) => {
@@ -122,61 +148,100 @@ export function DataProvider({ children }) {
     return result;
   };
 
-  const translateTexts = async (data) => {
+  const translateTexts = async (data, target) => {
     const flattened = flattenObject(data);
     const translations = {};
   
     for (const [key, text] of Object.entries(flattened)) {
       if (typeof text === "string" && text.trim()) {
-        // Call the API to translate (libretranslate, self hosted api)
-        const res = await fetch("http://127.0.0.1:5000/translate", {
+        try {
+          const res = await fetch("http://127.0.0.1:5000/translate", {
             method: "POST",
             body: JSON.stringify({
-                q: text,
-                source: "auto",
-                target: "fr",
-                format: "text",
-                alternatives: 3,
-                api_key: ""
+              q: text,
+              source: "auto",
+              target: target,
+              format: "text",
+              alternatives: 3,
+              api_key: "", // Make sure to include your API key if necessary
             }),
             headers: { "Content-Type": "application/json" },
-        });
-        const translatedData = await res.json();
-        //console.log(translatedData)
-        translations[key] = translatedData.translatedText || text; // Use translation or fallback to original
+          });
+  
+          // Handle non-2xx responses
+          if (!res.ok) {
+            throw new Error(`Error: ${res.status} - ${res.statusText}`);
+          }
+  
+          const translatedData = await res.json();
+          translations[key] = translatedData.translatedText || text;
+        } catch (error) {
+          // Alert the user in case of an error
+          alert(`Error translating text for key "${key}": ${error.message}`);
+          translations[key] = text; // Fallback to the original text
+        }
       } else {
-        translations[key] = text; // Keep non-string data unchanged
+        translations[key] = text;
       }
     }
   
     return unflattenObject(translations);
   };
+  
+  
+
+  const translateAllData = async (targetLanguage) => {
+    try {
+      const translatedDefaultTexts = await translateTexts(defaultTexts, targetLanguage);
+      const translatedDynamicData = await translateTexts(dynamicData, targetLanguage);
+  
+      setDefaultTexts(translatedDefaultTexts);
+      setDynamicData(translatedDynamicData);
+    } catch (error) {
+      console.error("Error during translation:", error);
+    }
+  };
+  
+  const addEventData = (newData) => {
+    setDynamicData((prevData) => ({
+      ...prevData,
+      ...newData,
+    }));
+  };
+  
 
   useEffect(() => {
     const startTranslation = async () => {
-      console.log("Starting the translation process...");
-      try {
-        const translatedData = await translateTexts(defaultTexts);
-        //console.log("Translated Data:", translatedData);
-        setDefaultTexts(translatedData); // Update state with translated data if needed
-      } catch (error) {
-        console.error("Error during translation:", error);
+      if (language !== "en") {
+        await translateAllData(language);
       }
     };
   
     startTranslation();
-  }, []);
+  }, [language]);
+  
 
   useEffect(() => {
-    console.log(defaultTexts)
-  },[defaultTexts])
+    console.log(dynamicData)
+  },[dynamicData])
   
 
   return (
-    <DataContext.Provider value={{ defaultTexts, setDefaultTexts }}>
+    <DataContext.Provider
+      value={{
+        defaultTexts,
+        setDefaultTexts,
+        dynamicData,
+        setDynamicData,
+        addEventData,
+        language,
+        setLanguage,
+      }}
+    >
       {children}
     </DataContext.Provider>
   );
+  
 }
 
 DataProvider.propTypes = {

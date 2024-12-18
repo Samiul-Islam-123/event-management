@@ -15,7 +15,8 @@ const Nav = () => {
     const navigate = useNavigate();
     const navRef = useRef(null);
     const [isMenuOpen, setIsMenuOpen] = useState(false);
-    const { defaultTexts, setDefaultTexts } = useData();
+    const { defaultTexts, setDefaultTexts, language, setLanguage } = useData();
+
 
     useEffect(() => {
         ScrollTrigger.create({
@@ -24,6 +25,7 @@ const Nav = () => {
             onEnter: () => gsap.to(navRef.current, { backgroundColor: "rgb(0,0,0,0.7)", duration: 0.6 }),
             onLeaveBack: () => gsap.to(navRef.current, { backgroundColor: "rgba(0,0,0,0.1)", duration: 0.6 }),
         });
+        console.log(language)
     }, []);
 
     const toggleMenu = () => {
@@ -130,7 +132,15 @@ const Nav = () => {
                 }} onClick={() => {
                     navigate('/contact-us')
                 }}>{defaultTexts.nav.menuItems[2]}</li>
+
+                <li style={{
+                    cursor: "pointer"
+                }} onClick={() => {
+                    language === 'en' ? setLanguage('fr') : setLanguage('en')
+                }}>Switch to {language === 'en' ? "French" : "English"}</li>
             </ul>
+
+
 
             {/* Profile Icon for Desktop */}
             <div className="profile h-10 w-10 rounded-full bg-black/40 hidden md:flex items-center justify-center">

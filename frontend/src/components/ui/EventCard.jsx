@@ -1,8 +1,10 @@
 import React from "react";
 import { useNavigate } from "react-router-dom";
+import { useData } from "../../context/DataContext";
 
 const EventCard = ({ _id, name, description, date, organizer, price, poster, location }) => {
 
+    const { defaultTexts } = useData();
     const navigate = useNavigate();
     const truncateText = (text, maxLength) => {
         return text.length > maxLength ? text.slice(0, maxLength) + "..." : text;
@@ -34,7 +36,7 @@ const EventCard = ({ _id, name, description, date, organizer, price, poster, loc
                 </div>
                 <div className="flex justify-between">
                     <p className=" font-medium">
-                        Organized By <br /> <span className=" text-[#E167FF]">{organizer.username}</span>
+                        {defaultTexts.eventCard.organizedBy} <br /> <span className=" text-[#E167FF]">{organizer.username}</span>
                     </p>
                     <p className="text-2xl font-semibold text-[#E167FF]">
                         ${price}

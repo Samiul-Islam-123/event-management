@@ -7,6 +7,7 @@ import { VscOrganization } from "react-icons/vsc";
 import { FaRegCalendar } from "react-icons/fa";
 import { IoLocationOutline } from "react-icons/io5";
 import RegisterForm from "./RegisterEvent";
+import { useData } from "../../context/DataContext";
 
 const EventsDetails = () => {
     const { eventID } = useParams();
@@ -14,6 +15,8 @@ const EventsDetails = () => {
     const navigate = useNavigate();
     const [ticketQuantity, setTicketQuantity] = useState(1);
     const [isBought, setIsBought] = useState(false);
+    const {defaultTexts, setDefaultTexts} = useData();
+
 
     const fetchEventDetails = async () => {
         const response = await axios.get(
@@ -96,7 +99,7 @@ const EventsDetails = () => {
 
                                 {/* Ticket Price */}
                                 <div className="flex items-center gap-4 text-gray-600 mt-4 p-4 border rounded-lg">
-                                    <h2 className="text-xl">Ticket Price:</h2>
+                                    <h2 className="text-xl">{defaultTexts.eventDetails.ticketPriceLabel}</h2>
                                     <h1 className="text-3xl font-bold text-[#E167FF]">
                                         ${details.price}
                                     </h1>
@@ -110,7 +113,7 @@ const EventsDetails = () => {
                                 <div>
                                     {/* Analytics for Organizers */}
                                     <h3 className="text-2xl font-semibold text-gray-800 mb-6">
-                                        Event Analytics
+                                        {defaultTexts.eventDetails.eventanalytics}
                                     </h3>
 
                                     <div className="space-y-4">
@@ -118,25 +121,25 @@ const EventsDetails = () => {
                                         <div>
                                             <h4 className="text-lg font-medium text-gray-700">Ticket Overview</h4>
                                             <p>
-                                                <strong>Total Tickets:</strong> {details.limit}
+                                                <strong>{defaultTexts.eventDetails.totalTickets}</strong> {details.limit}
                                             </p>
                                             <p>
-                                                <strong>Tickets Sold:</strong> {details.tickets.length}
+                                                <strong>{defaultTexts.eventDetails.ticketsSold}</strong> {details.tickets.length}
                                             </p>
                                             <p>
-                                                <strong>Tickets Remaining:</strong>{" "}
+                                                <strong>{defaultTexts.eventDetails.ticketsRemaining}</strong>{" "}
                                                 {details.limit - details.tickets.length}
                                             </p>
                                         </div>
 
                                         {/* Financial Overview */}
                                         <div>
-                                            <h4 className="text-lg font-medium text-gray-700">Financial Overview</h4>
+                                            <h4 className="text-lg font-medium text-gray-700">{defaultTexts.eventDetails.financialOverview}</h4>
                                             <p>
-                                                <strong>Price per Ticket:</strong> ${details.price}
+                                                <strong>{defaultTexts.eventDetails.pricePerTicket}</strong> ${details.price}
                                             </p>
                                             <p>
-                                                <strong>Total Sales:</strong> $
+                                                <strong>{defaultTexts.eventDetails.totalSales}</strong> $
                                                 {details.price * details.tickets.length}
                                             </p>
                                         </div>
@@ -144,10 +147,10 @@ const EventsDetails = () => {
                                         {/* Action Buttons */}
                                         <div className="space-x-4 mt-6">
                                             <button className="bg-blue-500 text-white p-3 rounded-lg">
-                                                Edit Event
+                                            {defaultTexts.eventDetails.editEventButton}
                                             </button>
                                             <button className="bg-green-500 text-white p-3 rounded-lg">
-                                                Manage Tickets
+                                            {defaultTexts.eventDetails.manageTicketsButton}
                                             </button>
                                         </div>
                                     </div>
@@ -156,7 +159,7 @@ const EventsDetails = () => {
 
                                 <>
                                     {isBought != null && isBought === true ? (<>
-                                        View ticket
+                                        {defaultTexts.eventDetails.viewTicketButton}
                                     </>) : (<>
                                         <RegisterForm
                                             details={details}
