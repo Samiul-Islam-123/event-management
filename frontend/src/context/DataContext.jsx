@@ -1,10 +1,12 @@
 import React, { createContext, useContext, useEffect, useState } from "react";
 import PropTypes from 'prop-types';
+import { FullScreenLoader } from "../components/FullScreenLoader";
 
 const DataContext = createContext();
 
 export function DataProvider({ children }) {
   const [dynamicData, setDynamicData] = useState({});
+  const [loading, setLoading] = useState(false)
 
   const [language, setLanguage] = useState('en');
   const [defaultTexts, setDefaultTexts] = useState({
@@ -29,6 +31,16 @@ export function DataProvider({ children }) {
       title: "PARTICIPATE WITH US",
       subtitle: ["Bringing people", "together"],
       description: "Experience the pinnacle of culture, elegance, entertainment, gastronomy and dining at Les Sorties de Diane. This exceptional series of events showcases the talents of renowned artists and performers and immerses you in the world of art, music, literature and gastronomy. Prepare to be captivated by captivating exhibitions and captivating performances held in exclusive venues, creating an intimate and enchanting atmosphere. Each event is a unique experience, one that inspires you and leaves you wanting more. Indulge in the beauty of the arts and join us at Les Sorties de Diane for unforgettable evenings that will ignite your passion.",
+    },
+    events: {
+      events : "Events",
+      grabyour : "Grab Your",
+      seats : "Seats",
+      upcoming : "Upcoming",
+      events : "Events",
+      all : "All",
+      events : "Events",
+      seemore : "See more"
     },
     footer: {
       companyName: "Les sorties de Diane",
@@ -149,6 +161,7 @@ export function DataProvider({ children }) {
   };
 
   const translateTexts = async (data, target) => {
+    setLoading(true);
     const flattened = flattenObject(data);
     const translations = {};
   
@@ -184,7 +197,7 @@ export function DataProvider({ children }) {
         translations[key] = text;
       }
     }
-  
+  setLoading(false)
     return unflattenObject(translations);
   };
   
@@ -212,10 +225,29 @@ export function DataProvider({ children }) {
 
   useEffect(() => {
     const startTranslation = async () => {
-      if (language !== "en") {
+      
         await translateAllData(language);
-      }
+      
     };
+
+    // Change both title[0] and title[1] based on language
+    setDefaultTexts((prevTexts) => ({
+      ...prevTexts,
+      hero: {
+        ...prevTexts.hero,
+        title: [
+          language === "en" ? "Live the moment," : "Vivez l'instant,", // title[0] for English or French
+          language === "en" ? "Love the experience." : "Aimez l'expérience.", // title[1] for English or French
+        ],
+      },
+      info: {
+        ...prevTexts.info,
+        title: [
+          language === "en" ? "We inspire" : "Nous inspire", // title[0] for English or French
+          language === "en" ? "people to go out more" : "les gens à sortir plus"
+        ]
+      }
+    }));
   
     startTranslation();
   }, [language]);
@@ -236,8 +268,10 @@ export function DataProvider({ children }) {
         addEventData,
         language,
         setLanguage,
+        loading
       }}
     >
+      {loading ? <FullScreenLoader /> : (<></>)}
       {children}
     </DataContext.Provider>
   );
