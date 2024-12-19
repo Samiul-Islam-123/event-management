@@ -166,6 +166,7 @@ export function DataProvider({ children }) {
     const translations = {};
   
     for (const [key, text] of Object.entries(flattened)) {
+      // Skip translation if text is empty, null, or undefined
       if (typeof text === "string" && text.trim()) {
         try {
           const res = await fetch("http://127.0.0.1:5000/translate", {
@@ -176,7 +177,7 @@ export function DataProvider({ children }) {
               target: target,
               format: "text",
               alternatives: 3,
-              api_key: "", // Make sure to include your API key if necessary
+              api_key: "", // Include your API key if necessary
             }),
             headers: { "Content-Type": "application/json" },
           });
@@ -189,17 +190,17 @@ export function DataProvider({ children }) {
           const translatedData = await res.json();
           translations[key] = translatedData.translatedText || text;
         } catch (error) {
-          // Alert the user in case of an error
-          alert(`Error translating text for key "${key}": ${error.message}`);
+          console.error(`Error translating text for key "${key}": ${error.message}`);
           translations[key] = text; // Fallback to the original text
         }
       } else {
-        translations[key] = text;
+        translations[key] = text; // Preserve original value if it is not a valid string
       }
     }
-  setLoading(false)
+    setLoading(false);
     return unflattenObject(translations);
   };
+  
   
   
 
