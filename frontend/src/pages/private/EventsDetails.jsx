@@ -153,8 +153,25 @@ const EventsDetails = () => {
                                             <button className="bg-blue-500 text-white p-3 rounded-lg">
                                             {defaultTexts.eventDetails.editEventButton}
                                             </button>
-                                            
+                                            <button onClick={async() => {
+                                                const confirmation = confirm("Sure ?")
+                                                if(confirmation){
+
+                                                    const response = await axios.delete(`${import.meta.env.VITE_API_URL}/event/${details._id}`)
+                                                    if(response.data.success === true)
+                                                        navigate('/app/profile')
+                                                    
+                                                    else{
+                                                        console.log(response.data);
+                                                        alert(response.data.message)
+                                                    }
+                                                }
+                                            }} className="bg-blue-500 text-white p-3 rounded-lg">
+                                            Delete event
+                                            </button>
                                         </div>
+
+                                       
                                     </div>
                                 </div>
                             ) : (

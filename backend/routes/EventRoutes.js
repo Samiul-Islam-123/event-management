@@ -4,6 +4,7 @@ const upload = require('../config/multer');
 const EventRouter = express.Router();
 const cloudinary = require('../config/cloudinary');
 const UserModel = require('../Database/Models/UserModel');
+const createStripeAccountMiddleware = require('../middlewares/stripemiddleware');
 
 const stripe = require('stripe')(process.env.STRIPE_SECRET_KEY);
 
@@ -26,7 +27,7 @@ EventRouter.post('/create-payment-intent', async (req, res) => {
     }
 });
 
-EventRouter.post('/poster',upload.single('poster'), async(req,res) => {
+EventRouter.post('/poster', upload.single('poster'), async (req, res) => {
     if (req.file) {
         //console.log('file found');
         const result = await cloudinary.uploader.upload_stream({
@@ -41,7 +42,7 @@ EventRouter.post('/poster',upload.single('poster'), async(req,res) => {
             res.json({
                 success: true,
                 message: "Poster Uploaded successfully",
-                url : posterUrl
+                url: posterUrl
             });
         }).end(req.file.buffer);
     } else {
@@ -53,94 +54,65 @@ EventRouter.post('/poster',upload.single('poster'), async(req,res) => {
 })
 
 
+
+
 // Create Event with Poster Image
-EventRouter.post('/', async (req, res) => {
+EventRouter.post('/', createStripeAccountMiddleware, async (req, res) => {
     const { name, description, date, limit, location, organizer, tickets, price, posterURL } = req.body;
 
-    if (name && description && date && location && organizer) {
-        try {
-            // Check if the organizer exists in the UserModel
-            let existingOrganizer = await UserModel.findOne({ _id: organizer }); 
+    try {
+        // Check if the organizer exists in the UserModel
+        let existingOrganizer = await UserModel.findOne({ _id: organizer });
 
-            if (!existingOrganizer) {
-                return res.json({
-                    success : false,
-                    message: "Organizer not found"
-                })
-
-                
-            }
-
-            else if(!existingOrganizer.stripe_id){
-
-                const [firstName, lastName] = existingOrganizer.username.split(" ");
-                
-                // Create a Stripe Express account for the organizer
-                const account = await stripe.accounts.create({
-                    type: 'standard',
-                    email: existingOrganizer.email,
-                    country: 'FR',
-                    business_type: 'individual', // or 'company', depending on the organizer type
-                    individual: {
-                        first_name: firstName,
-                        last_name: lastName,
-                    }
-                });
-                
-                // Save the Stripe account ID to the UserModel
-                existingOrganizer.stripe_id = account.id; // Store Stripe ID in the User model
-                
-                await existingOrganizer.save(); // Save the new organizer with Stripe ID
-            }
-
-            // Check for existing event to prevent duplicates
-            const existingEvent = await EventModel.findOne({
-                name,
-                date,
-                organizer: existingOrganizer._id // Use the organizer ID here
-            });
-
-            if (existingEvent) {
-                return res.json({
-                    success: false,
-                    message: 'Event already exists with the same name, date, and organizer.'
-                });
-            }
-
-            // Create new event with the organizer's ID and poster URL
-            const newEvent = new EventModel({
-                name,
-                description,
-                date,
-                limit,
-                location,
-                organizer: existingOrganizer._id, // Use the organizer's ID
-                tickets,
-                poster: posterURL,
-                price
-            });
-
-            await newEvent.save();
-
-            // Respond with success and event details
-            res.json({
-                success: true,
-                message: "Event created successfully",
-                event: newEvent
-            });
-
-        } catch (error) {
-            console.log(error)
-            res.json({
+        if (!existingOrganizer) {
+            return res.json({
                 success: false,
-                message: "Error creating event",
-                error: error.message
+                message: "Organizer not found"
             });
         }
-    } else {
+
+        // Check for existing event to prevent duplicates
+        const existingEvent = await EventModel.findOne({
+            name,
+            date,
+            organizer: existingOrganizer._id // Use the organizer ID here
+        });
+
+        if (existingEvent) {
+            return res.json({
+                success: false,
+                message: 'Event already exists with the same name, date, and organizer.'
+            });
+        }
+
+        // Create new event with the organizer's ID and poster URL
+        const newEvent = new EventModel({
+            name,
+            description,
+            date,
+            limit,
+            location,
+            organizer: existingOrganizer._id, // Use the organizer's ID
+            tickets,
+            poster: posterURL,
+            price
+        });
+
+        await newEvent.save();
+
+        // Respond with success and event details
+        res.json({
+            success: true,
+            message: "Event created successfully",
+            event: newEvent
+        });
+
+    } catch (error) {
+        console.log(error);
         res.json({
             success: false,
-            message: "Missing required fields"
+            message: "Error creating event",
+            error: error.message
         });
     }
 });

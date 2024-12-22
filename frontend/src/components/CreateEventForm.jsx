@@ -53,9 +53,13 @@ function CreateEventForm({ onCancel }) {
     return newErrors;
   };
 
+
   const handleSubmit = async (e) => {
     e.preventDefault();
     setLoading(true);
+
+    
+
     const newErrors = validateForm();
     if (Object.keys(newErrors).length > 0) {
       setErrors(newErrors);
@@ -80,7 +84,7 @@ function CreateEventForm({ onCancel }) {
           //console.log(formData)
 
           const EventResponse = await axios.post(`${import.meta.env.VITE_API_URL}/event`, formData)
-
+          console.log(EventResponse)
           if (EventResponse.data.success === true) {
             //sessionStorage.removeItem("formData");
             navigate('/app/profile');

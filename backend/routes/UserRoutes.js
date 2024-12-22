@@ -69,7 +69,7 @@ UserRouter.get('/:id', async (req, res) => {
     const { id } = req.params;
 
     if (id) {
-        const UserDetails = await UserModel.findOne({ _id: id });
+        const UserDetails = await UserModel.findOne({ clerkID: id });
 
         if (UserDetails) {
             res.json({

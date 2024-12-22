@@ -10,13 +10,37 @@ import Ticket from '../../components/ui/Ticket';
 import { useData } from '../../context/DataContext';
 
 function ProfilePage() {
-  const { defaultTexts ,setLoading} = useData();
+  const { defaultTexts, setLoading } = useData();
   const { profilePage } = defaultTexts;
   const { user } = useUser();
   const [isCreatingEvent, setIsCreatingEvent] = useState(false);
   const [createdEvents, setCreatedEvents] = useState([]);
   const [boughtTickets, setBoughtTickets] = useState(null);
   const [activeTab, setActiveTab] = useState('events');
+  const [profile, setProfile] = useState(null);
+
+  const fetchProfile = async () => {
+    try {
+      setLoading(true);
+      console.log(user.primaryEmailAddress.emailAddress)
+      const response = await axios.get(`${import.meta.env.VITE_API_URL}/user/${user.id}`,);
+
+      if (response.data.success === true) {
+        console.log(response.data.user)
+        setProfile(response.data.user)
+      }
+
+      else {
+        console.log(response.data);
+        alert(response.data.message)
+      }
+      // setCreatedEvents(response.data.events);
+      setLoading(false);
+
+    } catch (error) {
+      console.error('Error fetching created events:', error);
+    }
+  }
 
   const fetchCreatedEvents = async () => {
     try {
@@ -43,6 +67,7 @@ function ProfilePage() {
   };
 
   useEffect(() => {
+    fetchProfile();
     fetchCreatedEvents();
     fetchBoughtTickets();
   }, [user.id]);
@@ -60,11 +85,34 @@ function ProfilePage() {
           <h1 className="text-3xl font-bold mb-2">{user.fullName}</h1>
           <p className="text-gray-600 mb-1">{user.emailAddresses[0].emailAddress}</p>
           <button
-            onClick={() => setIsCreatingEvent(true)}
+            onClick={() => {
+              (profile.isOrganizer) ? setIsCreatingEvent(true) : alert("Please create a seller stripe account")
+            }}
             className="px-4 py-2 mt-2 bg-purple-600 text-white rounded-lg hover:bg-purple-700 focus:outline-none focus:ring-2 focus:ring-purple-500 focus:ring-offset-2"
           >
             {profilePage.createEventButton}
           </button>
+
+            {profile && (<>
+            
+          {profile.isOrganizer === false ? (<>
+            <button
+              onClick={async() => {
+                const res = await axios.post(`${import.meta.env.VITE_API_URL}/payment/create-stripe-account`,{
+                  organizer : profile._id
+                })
+                if(res.data.success === true){
+                  alert(res.data.message);
+                  window.location.href = res.data.accountLinkUrl
+                }
+              }}
+              className="px-4 py-2 mt-2 bg-purple-600 text-white rounded-lg hover:bg-purple-700 focus:outline-none focus:ring-2 focus:ring-purple-500 focus:ring-offset-2"
+              >
+              Create Seller stripe account
+            </button>
+          </>) : null}
+              </>)}
+
         </div>
       </div>
 

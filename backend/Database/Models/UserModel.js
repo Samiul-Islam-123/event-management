@@ -13,6 +13,10 @@ const UserSchema = new mongoose.Schema({
         required : true,
         type : String
     },
+    isOrganizer : {
+        type : Boolean,
+        default : false
+    },
     stripe_id : {
         type : String
         },

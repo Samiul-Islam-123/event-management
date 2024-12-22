@@ -1,5 +1,6 @@
 const PaymentRouter = require('express').Router();
 const Stripe = require('stripe');
+const UserModel = require('../Database/Models/UserModel');
 
 
 const stripe = Stripe(process.env.STRIPE_SECRET_KEY); // Ensure this is securely set
@@ -100,7 +101,7 @@ PaymentRouter.get('/success-split', async (req, res) => {
 
 PaymentRouter.post('/checkout-session-split', async (req, res) => {
   const { ticketQuantity, organizerAccountId, unitAmount } = req.body;
-
+  console.log(organizerAccountId)
   try {
     // Create a Stripe Checkout Session
     const session = await stripe.checkout.sessions.create({
@@ -124,14 +125,14 @@ PaymentRouter.post('/checkout-session-split', async (req, res) => {
         transfer_data: {
           destination: organizerAccountId, // The organizer's Stripe account ID
         },
-        application_fee_amount: Math.floor(unitAmount * 100 * 0.1), // 10% platform fee
+        application_fee_amount: Math.floor(unitAmount * 100 * 0.2), // 20% platform fee
       },
     });
 
     // Send the session URL to the client
     res.json({ url: session.url });
   } catch (error) {
-    console.error('Error creating checkout session', error);
+    console.error('Error cmy reating checkout session', error);
     res.status(500).send({
       success: false,
       message: 'Internal Server Error',
@@ -140,5 +141,112 @@ PaymentRouter.post('/checkout-session-split', async (req, res) => {
   }
 });
 
+PaymentRouter.post('/create-stripe-account', async (req, res) => {
+  const { organizer } = req.body;
+
+  try {
+
+    // Step 1: Check if the organizer exists
+    let existingOrganizer = await UserModel.findOne({ _id: organizer });
+
+    if (!existingOrganizer) {
+      return res.status(404).json({
+        success: false,
+        message: "Organizer not found"
+      });
+    }
+
+    // Step 2: If the organizer doesn't have a Stripe ID, create a new Stripe account
+    if (!existingOrganizer.stripe_id) {
+      const [firstName, lastName] = existingOrganizer.username.split(" ");
+
+
+
+
+      // Create a Stripe Express account for the organizer
+      const account = await stripe.accounts.create({
+        type: 'standard',//express
+        email: existingOrganizer.email,
+        country: 'FR',
+        business_type: 'individual', // or 'company', depending on the organizer type
+        individual: {
+          first_name: firstName,
+          last_name: lastName,
+        }
+      });
+
+      existingOrganizer.stripe_id = account.id
+      existingOrganizer.isOrganizer = true;
+
+      await existingOrganizer.save();
+
+      // Generate the account link for onboarding
+      const accountLink = await stripe.accountLinks.create({
+        account: account.id,  // Use the organizer's Stripe account ID
+        refresh_url: process.env.CLIENT_URL + '/reauth',  // URL if they need to reauthorize
+        return_url: process.env.CLIENT_URL + '/app/profile',  // URL after successful onboarding
+        type: 'account_onboarding',  // This type is for onboarding the user
+      });
+
+      // Send the URL for the frontend to redirect the user to Stripe's hosted onboarding page
+      return res.json({
+        success: true,
+        message: 'Redirecting to Stripe onboarding...',
+        accountLinkUrl: accountLink.url  // Send the account link URL to the frontend
+      });
+    }
+  }
+  catch (error) {
+    console.error('Error creating Stripe account:', error);
+    res.status(500).json({
+      success: false,
+      message: 'Error creating Stripe account.',
+      error: error.message
+    });
+  }
+
+
+})
+
+PaymentRouter.post('/get-stripe-dashboard-link/:organizer', async (req, res) => {
+  const { organizer } = req.params;
+
+  try {
+    // Step 1: Check if the organizer exists
+    const existingOrganizer = await UserModel.findOne({ _id: organizer });
+
+    if (!existingOrganizer) {
+      return res.status(404).json({
+        success: false,
+        message: "Organizer not found",
+      });
+    }
+
+    // Step 2: Check if the organizer has a Stripe ID
+    if (!existingOrganizer.stripe_id) {
+      return res.status(400).json({
+        success: false,
+        message: "Organizer does not have a Stripe account. Please onboard the organizer first.",
+      });
+    }
+
+    // Step 3: Generate a login link for the Stripe Express Dashboard
+    const loginLink = await stripe.accounts.createLoginLink(existingOrganizer.stripe_id);
+
+    // Step 4: Send the login link to the frontend
+    return res.json({
+      success: true,
+      message: "Stripe dashboard link generated successfully.",
+      dashboardUrl: loginLink.url,
+    });
+  } catch (error) {
+    console.error("Error generating Stripe dashboard link:", error);
+    res.status(500).json({
+      success: false,
+      message: "Error generating Stripe dashboard link.",
+      error: error.message,
+    });
+  }
+});
 
 module.exports = PaymentRouter;
