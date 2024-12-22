@@ -10,7 +10,7 @@ import Ticket from '../../components/ui/Ticket';
 import { useData } from '../../context/DataContext';
 
 function ProfilePage() {
-  const { defaultTexts } = useData();
+  const { defaultTexts ,setLoading} = useData();
   const { profilePage } = defaultTexts;
   const { user } = useUser();
   const [isCreatingEvent, setIsCreatingEvent] = useState(false);
@@ -20,8 +20,11 @@ function ProfilePage() {
 
   const fetchCreatedEvents = async () => {
     try {
+      setLoading(true);
       const response = await axios.get(`${import.meta.env.VITE_API_URL}/event/my-events/${Cookies.get('user_id')}`);
       setCreatedEvents(response.data.events);
+      setLoading(false);
+
     } catch (error) {
       console.error('Error fetching created events:', error);
     }
@@ -29,8 +32,11 @@ function ProfilePage() {
 
   const fetchBoughtTickets = async () => {
     try {
+      setLoading(true);
+
       const response = await axios.get(`${import.meta.env.VITE_API_URL}/ticket/bought/${localStorage.getItem('user_id')}`);
       setBoughtTickets(response.data.boughtTickets);
+      setLoading(false)
     } catch (error) {
       console.error('Error fetching bought tickets:', error);
     }

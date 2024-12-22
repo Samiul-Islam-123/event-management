@@ -9,16 +9,19 @@ function EventsPage() {
   const [searchQuery, setSearchQuery] = useState("");
   const [searchResults, setSearchResults] = useState([]);
   const [upcomingEvents, setUpcomingEvents] = useState([]);
-  const { defaultTexts } = useData();
+  const { defaultTexts , setLoading} = useData();
 
   const fetchEvents = async () => {
     try {
+      setLoading(true);
       const response = await axios.get(`${import.meta.env.VITE_API_URL}/event/`);
       if (response.data.success) {
         setUpcomingEvents(response.data.events);
       } else {
         alert(defaultTexts.eventCard.apiError || "Something went wrong :(");
       }
+      setLoading(false);
+
     } catch (error) {
       console.error("Error fetching events:", error);
       alert(defaultTexts.eventCard.apiError || "Something went wrong :(");

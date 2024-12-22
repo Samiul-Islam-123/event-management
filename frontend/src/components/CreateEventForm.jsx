@@ -2,10 +2,14 @@ import React, { useState } from 'react';
 import axios from 'axios';
 import { useUser } from '@clerk/clerk-react';
 import { useFormData } from '../context/FormDataContext';
+import { useNavigate } from 'react-router-dom';
+import { useData } from '../context/DataContext';
 
 function CreateEventForm({ onCancel }) {
   const { user } = useUser();
   const { setData } = useFormData();
+  const navigate = useNavigate()
+  const {loading, setLoading} = useData();
 
   const [formData, setFormData] = useState({
     name: '',
@@ -51,6 +55,7 @@ function CreateEventForm({ onCancel }) {
 
   const handleSubmit = async (e) => {
     e.preventDefault();
+    setLoading(true);
     const newErrors = validateForm();
     if (Object.keys(newErrors).length > 0) {
       setErrors(newErrors);
@@ -71,17 +76,34 @@ function CreateEventForm({ onCancel }) {
         const posterResponse = await axios.post(`${import.meta.env.VITE_API_URL}/event/poster`, posterData);
         if (posterResponse.data.success) {
           console.log("Poster uploaded successfully:", posterResponse.data.url);
+          formData.posterURL = posterResponse.data.url;
+          //console.log(formData)
 
-          setFormData((prevData) => {
-            const updatedData = {
-              ...prevData,
-              posterURL: posterResponse.data.url,
-            };
-            console.log("Updated formData:", updatedData); // Log immediately after update
-            setData(updatedData)
-            sessionStorage.setItem('formData', JSON.stringify(updatedData));
-            return updatedData;
-          });
+          const EventResponse = await axios.post(`${import.meta.env.VITE_API_URL}/event`, formData)
+
+          if (EventResponse.data.success === true) {
+            //sessionStorage.removeItem("formData");
+            navigate('/app/profile');
+          }
+          else {
+            alert(EventResponse.data.message)
+            console.log(EventResponse.data)
+            //cancel the payment
+            //navigate('/app/profile');
+
+          }
+          // setFormData(async(prevData) => {
+          //   const updatedData = {
+          //     ...prevData,
+          //     posterURL: posterResponse.data.url,
+          //   };
+          //   console.log("Updated formData:", updatedData); // Log immediately after update
+          //   setData(updatedData)
+
+
+          //   //sessionStorage.setItem('formData', JSON.stringify(updatedData));
+          //   return updatedData;
+          // });
         } else {
           throw new Error('Failed to upload poster');
         }
@@ -91,16 +113,18 @@ function CreateEventForm({ onCancel }) {
 
       console.log("Final formData after update:", formData); // May still show the old state here
 
+
+
       // Store the updated formData in session storage
 
-      const response = await axios.post(`${import.meta.env.VITE_API_URL}/payment/checkout-session`, {
-        price: 20, // $20 for creating event
-        name: formData.name
-      }, {
-        headers: { 'Content-Type': 'application/json' }
-      });
+      // const response = await axios.post(`${import.meta.env.VITE_API_URL}/payment/checkout-session`, {
+      //   price: 20, // $20 for creating event
+      //   name: formData.name
+      // }, {
+      //   headers: { 'Content-Type': 'application/json' }
+      // });
 
-      console.log(response);
+      // console.log(response);
 
       // Reset form after submission
       setFormData({
@@ -116,17 +140,19 @@ function CreateEventForm({ onCancel }) {
       setQrCode(null);
       setErrors({});
 
-      if (response.data.success) {
-        window.location.href = response.data.url;
-      } else {
-        alert(response.data.message);
-      }
+      // if (response.data.success) {
+      //   window.location.href = response.data.url;
+      // } else {
+      //   alert(response.data.message);
+      // }
 
       onCancel();
     } catch (error) {
       console.error('Error creating event:', error);
       alert('Failed to create event. Please try again.');
     }
+
+    setLoading(false)
   };
 
   const handleCancel = () => {
@@ -147,7 +173,7 @@ function CreateEventForm({ onCancel }) {
 
   return (
     <div className="container mx-auto px-4 py-8">
-      <h1 className="text-3xl font-bold mb-8">Create New Event (for $20)</h1>
+      <h1 className="text-3xl font-bold mb-8">Create New Event</h1>
       <form onSubmit={handleSubmit} className="max-w-2xl mx-auto">
         <div className="mb-4">
           <label htmlFor="name" className="block text-sm font-medium text-gray-700">Event Name</label>
@@ -246,10 +272,11 @@ function CreateEventForm({ onCancel }) {
 
         <div className="mt-6 flex space-x-4">
           <button
+          disabled={loading}
             type="submit"
             className="w-full px-4 py-2 bg-purple-600 text-white rounded-md hover:bg-purple-700 focus:outline-none focus:ring-2 focus:ring-purple-500 focus:ring-offset-2"
           >
-            Proceed to payment
+            Create Event
           </button>
           <button
             type="button"

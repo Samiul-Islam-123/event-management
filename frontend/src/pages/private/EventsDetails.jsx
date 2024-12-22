@@ -15,19 +15,22 @@ const EventsDetails = () => {
     const navigate = useNavigate();
     const [ticketQuantity, setTicketQuantity] = useState(1);
     const [isBought, setIsBought] = useState(false);
-    const {defaultTexts, setDefaultTexts} = useData();
+    const {defaultTexts, setDefaultTexts, setLoading} = useData();
 
 
     const fetchEventDetails = async () => {
+        setLoading(true);
         const response = await axios.get(
             `${import.meta.env.VITE_API_URL}/event/${eventID}`
         );
         if (response.data.success === true) {
             setDetails(response.data.event);
         } else alert(response.data.message);
+        setLoading(false)
     };
 
     const checkTicketBought = async () => {
+        setLoading(true)
         console.log({
             user_id: localStorage.getItem('user_id'),
             event_id: eventID
@@ -41,6 +44,7 @@ const EventsDetails = () => {
         if (response.data.status === null && response.data.success === false) {
             alert(response.data.message);
         }
+        setLoading(false)
     }
 
     useEffect(() => {
@@ -149,9 +153,7 @@ const EventsDetails = () => {
                                             <button className="bg-blue-500 text-white p-3 rounded-lg">
                                             {defaultTexts.eventDetails.editEventButton}
                                             </button>
-                                            <button className="bg-green-500 text-white p-3 rounded-lg">
-                                            {defaultTexts.eventDetails.manageTicketsButton}
-                                            </button>
+                                            
                                         </div>
                                     </div>
                                 </div>
