@@ -98,6 +98,7 @@ function ProfilePage() {
           {profile.isOrganizer === false ? (<>
             <button
               onClick={async() => {
+                setLoading(true);
                 const res = await axios.post(`${import.meta.env.VITE_API_URL}/payment/create-stripe-account`,{
                   organizer : profile._id
                 })
@@ -105,6 +106,13 @@ function ProfilePage() {
                   alert(res.data.message);
                   window.location.href = res.data.accountLinkUrl
                 }
+
+                else
+                {
+                  alert(response.data.message)
+                  console.log(response)
+                }
+                setLoading(false)
               }}
               className="px-4 py-2 mt-2 bg-purple-600 text-white rounded-lg hover:bg-purple-700 focus:outline-none focus:ring-2 focus:ring-purple-500 focus:ring-offset-2"
               >

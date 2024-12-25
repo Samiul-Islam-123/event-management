@@ -249,4 +249,116 @@ PaymentRouter.post('/get-stripe-dashboard-link/:organizer', async (req, res) => 
   }
 });
 
+
+async function generateLoginLink(accountId) {
+  try {
+    const loginLink = await stripe.accounts.createLoginLink(accountId);
+    console.log('Login link:', loginLink.url);
+    return loginLink.url;
+  } catch (error) {
+    console.error('Error generating login link:', error.message);
+    throw error;
+  }
+}
+PaymentRouter.get('/details/:organizerStripeID', async (req, res) => {
+  const { organizerStripeID } = req.params;
+
+  try {
+    // Fetch account details
+    const accountDetails = await stripe.accounts.retrieve(organizerStripeID);
+
+    // Fetch account balance
+    const balance = await stripe.balance.retrieve({
+      stripeAccount: organizerStripeID,
+    });
+
+    // Fetch recent transactions
+    const transactions = await stripe.balanceTransactions.list(
+      { limit: 10 }, // Limit to the latest 10 transactions
+      { stripeAccount: organizerStripeID }
+    );
+
+    // Fetch recent payouts
+    const payouts = await stripe.payouts.list(
+      { limit: 10 }, // Limit to the latest 10 payouts
+      { stripeAccount: organizerStripeID }
+    );
+
+    // Organize the balance information (total available balance, pending, etc.)
+    const availableBalance = balance.available.reduce((acc, item) => acc + item.amount, 0) / 100; // In EUR or other currency
+    const pendingBalance = balance.pending.reduce((acc, item) => acc + item.amount, 0) / 100; // In EUR or other currency
+
+    // Send the response with all the details
+    res.json({
+      success: true,
+      message: 'Organizer Stripe account details retrieved successfully',
+      data: {
+        //accountDetails,
+        balance: {
+          available: availableBalance,
+          pending: pendingBalance,
+        },
+        transactions: transactions.data,
+        payouts: payouts.data,
+      },
+    });
+  } catch (error) {
+    console.error('Error fetching organizer Stripe details:', error);
+    res.status(500).json({
+      success: false,
+      message: 'Failed to retrieve organizer Stripe account details',
+      error: error.message,
+    });
+  }
+});
+
+
+PaymentRouter.post('/withdraw/:organizerStripeID', async (req, res) => {
+  const { organizerStripeID } = req.params;
+
+  try {
+    // Fetch account balance
+    const balance = await stripe.balance.retrieve({
+      stripeAccount: organizerStripeID,
+    });
+
+    // Calculate total available amount
+    const totalAvailable = balance.available.reduce((sum, item) => sum + item.amount, 0);
+
+    if (totalAvailable <= 0) {
+      return res.status(400).json({
+        success: false,
+        message: 'Insufficient funds for withdrawal.',
+      });
+    }
+
+    // Create a payout
+    const payout = await stripe.payouts.create(
+      {
+        amount: totalAvailable, // Amount in cents
+        currency: balance.available[0]?.currency || 'usd', // Default to USD
+      },
+      { stripeAccount: organizerStripeID } // Specify the connected account
+    );
+
+    // Respond with payout details
+    res.json({
+      success: true,
+      message: 'Withdrawal initiated successfully.',
+      data: {
+        payout,
+      },
+    });
+  } catch (error) {
+    console.error('Error initiating withdrawal:', error);
+    res.status(500).json({
+      success: false,
+      message: 'Failed to initiate withdrawal.',
+      error: error.message,
+    });
+  }
+});
+
+
+
 module.exports = PaymentRouter;
