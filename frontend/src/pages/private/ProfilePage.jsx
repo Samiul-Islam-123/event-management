@@ -8,6 +8,7 @@ import Nav from '../../components/Nav';
 import Cookies from "js-cookie";
 import Ticket from '../../components/ui/Ticket';
 import { useData } from '../../context/DataContext';
+import StripeDashboard from '../../components/StripeDashboard';
 
 function ProfilePage() {
   const { defaultTexts, setLoading } = useData();
@@ -141,6 +142,13 @@ function ProfilePage() {
         >
           {profilePage.tabs.tickets}
         </button>
+        <button
+          onClick={() => setActiveTab('dashboard')}
+          className={`px-4 py-2 ${activeTab === 'dashboard' ? 'border-b-2 border-purple-600 text-purple-600' : 'text-gray-600'}`}
+        >
+          {/* {profilePage.tabs.dashboard} */}
+          Dashboard
+        </button>
       </div>
 
       <div>
@@ -174,6 +182,9 @@ function ProfilePage() {
               )}
             </div>
           </div>
+        )}
+        {activeTab === 'dashboard' && (
+          <StripeDashboard />
         )}
       </div>
     </div>

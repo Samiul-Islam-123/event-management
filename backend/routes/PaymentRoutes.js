@@ -260,10 +260,24 @@ async function generateLoginLink(accountId) {
     throw error;
   }
 }
-PaymentRouter.get('/details/:organizerStripeID', async (req, res) => {
-  const { organizerStripeID } = req.params;
+PaymentRouter.get('/details/:clerkID', async (req, res) => {
+  const { clerkID } = req.params;
 
   try {
+    const user = await UserModel.findOne({
+      clerkID : clerkID,
+
+    })
+
+    if (!user) {
+      return res.json({
+        success: false,
+        message: "user not found",
+      })
+    }
+
+    const organizerStripeID = user.stripe_id;
+
     // Fetch account details
     const accountDetails = await stripe.accounts.retrieve(organizerStripeID);
 

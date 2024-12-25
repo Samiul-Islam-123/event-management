@@ -7,6 +7,7 @@ import CustomUserButton from "./ui/CustomUserButton";
 import gsap from "gsap";
 import { ScrollTrigger } from "gsap/ScrollTrigger";
 import { useData } from "../context/DataContext";
+import LanguageToggleSlider from "./ui/LanguageToggleButton";
 
 gsap.registerPlugin(ScrollTrigger);
 
@@ -137,17 +138,19 @@ const Nav = () => {
                     cursor: "pointer"
                 }} onClick={() => {
                     language === 'en' ? setLanguage('fr') : setLanguage('en')
-                }}>Switch to {language === 'en' ? "French" : "English"}</li>
+                }}>Switch to {language === 'en' ? "French" : "English"} </li>
+
+                <li><LanguageToggleSlider /></li>
             </ul>
 
 
 
             {/* Profile Icon for Desktop */}
-            <div className="profile h-10 w-10 rounded-full bg-black/40 hidden md:flex items-center justify-center">
+            <div className="profile h-10 w-10 rounded-full bg-black/40 hidden md:flex items-center justify-center" >
                 {isSignedIn ? (
                     <CustomUserButton />
                 ) : (
-                    <FaUserAlt />
+                    <a href="/login"><FaUserAlt /></a>
                 )}
             </div>
         </nav>
