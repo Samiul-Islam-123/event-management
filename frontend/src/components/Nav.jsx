@@ -134,13 +134,15 @@ const Nav = () => {
                     navigate('/contact-us')
                 }}>{defaultTexts.nav.menuItems[2]}</li>
 
-                <li style={{
+                {/* <li style={{
                     cursor: "pointer"
                 }} onClick={() => {
                     language === 'en' ? setLanguage('fr') : setLanguage('en')
-                }}>Switch to {language === 'en' ? "French" : "English"} </li>
+                }}>Switch to {language === 'en' ? "French" : "English"} </li> */}
 
-                <li><LanguageToggleSlider /></li>
+                <li onClick={() => {
+                    language === 'en' ? setLanguage('fr') : setLanguage('en')
+                }}><LanguageToggleSlider /></li>
             </ul>
 
 
