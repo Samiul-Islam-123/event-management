@@ -53,6 +53,63 @@ EventRouter.post('/poster', upload.single('poster'), async (req, res) => {
     }
 })
 
+EventRouter.put('/poster', upload.single('poster'), async (req, res) => {
+    const { oldImageUrl } = req.body;
+
+    if (!oldImageUrl) {
+        return res.json({
+            success: false,
+            message: "Old image URL is required",
+        });
+    }
+
+    if (!req.file) {
+        return res.json({
+            success: false,
+            message: "New image is required",
+        });
+    }
+
+    try {
+        // Extract the public_id from the old image URL
+        const publicId = oldImageUrl.split('/').slice(-1)[0].split('.')[0];
+        
+        // Delete the old image from Cloudinary
+        await cloudinary.uploader.destroy(`event_posters/${publicId}`, (error, result) => {
+            if (error) {
+                throw new Error('Failed to delete the old image');
+            }
+        });
+
+        // Upload the new image
+        cloudinary.uploader.upload_stream(
+            {
+                resource_type: 'image',
+                folder: 'event_posters',
+            },
+            async (error, result) => {
+                if (error) {
+                    throw new Error('Failed to upload the new image');
+                }
+
+                // Get the secure URL of the new image
+                const newPosterUrl = result.secure_url;
+
+                res.json({
+                    success: true,
+                    message: "Image replaced successfully",
+                    url: newPosterUrl,
+                });
+            }
+        ).end(req.file.buffer);
+    } catch (error) {
+        res.json({
+            success: false,
+            message: "Error replacing the image",
+            error: error.message,
+        });
+    }
+});
 
 
 
@@ -210,44 +267,81 @@ EventRouter.get('/', async (req, res) => {
 
 
 // Update Event by ID
-EventRouter.put('/:id', async (req, res) => {
+EventRouter.put('/:id', upload.single('poster'), async (req, res) => {
     const { id } = req.params;
-    const { name, description, date, limit, location, organizer, tickets } = req.body;
+    const { oldImageUrl, name, description, date, limit, location, organizer, tickets } = req.body;
 
-    if (id) {
-        try {
-            const updatedEvent = await EventModel.findByIdAndUpdate(
-                id,
-                { name, description, date, limit, location, organizer, tickets },
-                { new: true, runValidators: true }
-            ).populate('organizer').populate('tickets');
+    if (!id) {
+        return res.json({
+            success: false,
+            message: "Event ID is required",
+        });
+    }
 
-            if (updatedEvent) {
-                res.json({
-                    success: true,
-                    message: "Event updated successfully",
-                    event: updatedEvent
-                });
-            } else {
-                res.json({
+    try {
+        let newPosterUrl = oldImageUrl; // Default to old URL if no new image is uploaded
+
+        // If a new poster is uploaded
+        if (req.file) {
+            if (!oldImageUrl) {
+                return res.json({
                     success: false,
-                    message: "Event not found"
+                    message: "Old image URL is required to replace the poster",
                 });
             }
-        } catch (error) {
+
+            // Extract the public_id from the old image URL
+            const publicId = oldImageUrl.split('/').slice(-1)[0].split('.')[0];
+
+            // Delete the old image from Cloudinary
+            await cloudinary.uploader.destroy(`event_posters/${publicId}`, (error, result) => {
+                if (error) {
+                    throw new Error('Failed to delete the old image');
+                }
+            });
+
+            // Upload the new image
+            const uploadResult = await new Promise((resolve, reject) => {
+                cloudinary.uploader.upload_stream(
+                    { resource_type: 'image', folder: 'event_posters' },
+                    (error, result) => {
+                        if (error) return reject(error);
+                        resolve(result);
+                    }
+                ).end(req.file.buffer);
+            });
+
+            newPosterUrl = uploadResult.secure_url;
+        }
+
+        // Update the event in the database
+        const updatedEvent = await EventModel.findByIdAndUpdate(
+            id,
+            { name, description, date, limit, location, organizer, tickets, poster: newPosterUrl },
+            { new: true, runValidators: true }
+        ).populate('organizer').populate('tickets');
+
+        if (updatedEvent) {
+            res.json({
+                success: true,
+                message: "Event updated successfully",
+                event: updatedEvent,
+            });
+        } else {
             res.json({
                 success: false,
-                message: "Error updating event",
-                error: error.message
+                message: "Event not found",
             });
         }
-    } else {
+    } catch (error) {
         res.json({
             success: false,
-            message: "Event ID required"
+            message: "Error updating event",
+            error: error.message,
         });
     }
 });
+
 
 // Delete Event by ID
 EventRouter.delete('/:id', async (req, res) => {
@@ -255,14 +349,17 @@ EventRouter.delete('/:id', async (req, res) => {
 
     if (id) {
         try {
-            const deletedEvent = await EventModel.findByIdAndDelete(id);
+            const deletedEvent = await EventModel.findById(id);
 
-            if (deletedEvent) {
+            if(deletedEvent && deletedEvent.tickets.length ===0){
+                await EventModel.findByIdAndRemove(id);
                 res.json({
                     success: true,
                     message: "Event deleted successfully"
                 });
-            } else {
+            }
+
+             else {
                 res.json({
                     success: false,
                     message: "Event not found"

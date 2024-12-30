@@ -150,7 +150,9 @@ const EventsDetails = () => {
 
                                         {/* Action Buttons */}
                                         <div className="space-x-4 mt-6">
-                                            <button className="bg-blue-500 text-white p-3 rounded-lg">
+                                            <button onClick={()=>[
+                                                navigate('/app/edit-Event/'+eventID)
+                                            ]} className="bg-blue-500 text-white p-3 rounded-lg">
                                             {defaultTexts.eventDetails.editEventButton}
                                             </button>
                                             <button onClick={async() => {

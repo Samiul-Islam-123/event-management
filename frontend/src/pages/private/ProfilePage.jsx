@@ -147,7 +147,7 @@ function ProfilePage() {
           className={`px-4 py-2 ${activeTab === 'dashboard' ? 'border-b-2 border-purple-600 text-purple-600' : 'text-gray-600'}`}
         >
           {/* {profilePage.tabs.dashboard} */}
-          Dashboard
+          {defaultTexts.stripeDashboard.title}
         </button>
       </div>
 

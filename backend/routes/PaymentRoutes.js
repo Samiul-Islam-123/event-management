@@ -326,14 +326,15 @@ PaymentRouter.get('/details/:clerkID', async (req, res) => {
   }
 });
 
-
 PaymentRouter.post('/withdraw/:organizerStripeID', async (req, res) => {
   const { organizerStripeID } = req.params;
 
   try {
     // Fetch account balance
     const balance = await stripe.balance.retrieve({
-      stripeAccount: organizerStripeID,
+      // No parameters needed here
+    }, {
+      stripeAccount: organizerStripeID, // Specify the connected account using the Stripe-Account header
     });
 
     // Calculate total available amount
@@ -372,6 +373,7 @@ PaymentRouter.post('/withdraw/:organizerStripeID', async (req, res) => {
     });
   }
 });
+
 
 
 

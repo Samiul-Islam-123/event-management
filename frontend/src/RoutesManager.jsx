@@ -17,6 +17,7 @@ import CancelPage from './pages/payment/CancelPage';
 import RegisterEvent from './pages/private/RegisterEvent';
 import SuccessSplit from './pages/payment/SuccessSplit';
 import ContactPage from './pages/public/ContactPage';
+import EditEvent from './components/EditEvent';
 
 function RoutesManager() {
   const { isSignedIn, isLoaded, user } = useUser(); // Get the user object for additional info
@@ -92,6 +93,8 @@ function RoutesManager() {
       <Route path="/app/register-event/:eventID" element={isSignedIn ? <RegisterEvent /> : <Navigate to="/login" />} />
       
       <Route path="/app/eventDetails/:eventID" element={isSignedIn ? <EventsDetails /> : <Navigate to="/login" />} />
+      <Route path="/app/edit-Event/:eventID" element={isSignedIn ? <EditEvent /> : <Navigate to="/login" />} />
+      
 
       {/* Catch-all Route */}
       <Route path="/success" element={<SuccessPage />} />

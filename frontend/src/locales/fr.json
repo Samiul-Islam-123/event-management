@@ -1,152 +1,177 @@
 {
-    "nav": {
-      "logo": "Sorties de Diane",
-      "menuItems": [
+  "nav": {
+    "logo": "Sorties de Diane",
+    "menuItems": [
+      "Home",
+      "Events",
+      "Contact"
+    ],
+    "events": {
+      "title": "Événements",
+      "items": [
+        "All Events",
+        "Upcoming Events",
+        "Featured Events"
+      ]
+    }
+  },
+  "hero": {
+    "title": [
+      "Live the moment,",
+      "Love the experience."
+    ],
+    "ctaButton": "Tous les événements"
+  },
+  "info": {
+    "welcome": "Bienvenue à toutes les sorties de Diane",
+    "title": [
+      "We inspire",
+      "people to go out more"
+    ],
+    "description": "Les nuits de Diane Out est une série d'événements exceptionnels qui promettent des soirées inoubliables remplies de culture, d'élégance et de divertissement. Plongez-vous dans le monde de l'art, de la musique et de la littérature comme les nuits de Diane Découvrez les talents d'artistes et d'artistes renommés. Nos événements soigneusement sélectionnés se déroulent dans des lieux exclusifs, créant une atmosphère intime et enchanteresse pour vous. Des expositions captivantes aux spectacles captivants, chaque événement est une expérience unique qui vous laissera inspirer et vouloir plus. Rejoignez-nous à Diane's Nights Out et profitez de la beauté des arts."
+  },
+  "infoSecond": {
+    "title": "PARTICIPATION AUX ÉTATS-UNIS",
+    "subtitle": [
+      "Bringing people",
+      "together"
+    ],
+    "description": "Vivez l'apogée de la culture, de l'élégance, du divertissement, de la gastronomie et des repas aux Sorties de Diane. Cette série exceptionnelle d'événements met en valeur les talents d'artistes et d'artistes renommés et vous plonge dans le monde de l'art, de la musique, de la littérature et de la gastronomie. Préparez-vous à être captivant par des expositions captivantes et des spectacles captivants dans des lieux exclusifs, créant une atmosphère intime et enchanteur. Chaque événement est une expérience unique, qui vous inspire et vous laisse désirer plus. Savourez la beauté des arts et rejoignez-nous chez Les Sorties de Diane pour des soirées inoubliables qui enflammeront votre passion."
+  },
+  "events": {
+    "events": "Événements",
+    "grabyour": "Prenez votre",
+    "seats": "Sièges",
+    "upcoming": "À venir",
+    "all": "Tous",
+    "seemore": "Voir plus"
+  },
+  "footer": {
+    "companyName": "Sorties de Diane",
+    "tagline": "Votre passerelle vers les événements",
+    "quickLinks": {
+      "title": "Liens rapides",
+      "items": [
         "Home",
         "Events",
-        "Contact"
-      ],
-      "events": {
-        "title": "Événements",
-        "items": [
-          "All Events",
-          "Upcoming Events",
-          "Featured Events"
-        ]
+        "Contact Us"
+      ]
+    },
+    "userLinks": {
+      "title": "Liens utilisateurs",
+      "items": [
+        "My Account",
+        "Order History",
+        "Tickets"
+      ]
+    },
+    "legal": {
+      "title": "Droit",
+      "items": [
+        "Privacy Policy",
+        "Terms of Service"
+      ]
+    },
+    "socialMedia": [
+      "Facebook",
+      "Twitter",
+      "Instagram"
+    ],
+    "newsletter": {
+      "label": "Abonnez-vous à notre newsletter",
+      "placeholder": "Adresse électronique",
+      "buttonText": "Abonnez-vous"
+    },
+    "copyright": "© {an} Les sorties de Diane. Tous droits réservés."
+  },
+  "contactPage": {
+    "title": "Contactez-nous",
+    "form": {
+      "name": {
+        "label": "Nom",
+        "placeholder": "Votre nom",
+        "error": "Le nom est requis."
+      },
+      "email": {
+        "label": "Courriel",
+        "placeholder": "Votre courriel",
+        "error": "Un courriel est nécessaire.",
+        "invalidError": "Veuillez saisir un courriel valide."
+      },
+      "message": {
+        "label": "Message",
+        "placeholder": "Votre message",
+        "error": "Le message ne peut pas être vide."
+      },
+      "submitButton": {
+        "default": "Envoyer un message",
+        "loading": "Envoi . ."
       }
     },
-    "hero": {
-      "title": [
-        "Live the moment,",
-        "Love the experience."
-      ],
-      "ctaButton": "Tous les événements"
+    "apiError": "Quelque chose a mal tourné. Veuillez réessayer plus tard.",
+    "successMessage": "Merci pour vos commentaires! Nous vous rappellerons bientôt."
+  },
+  "profilePage": {
+    "createEventButton": "Créer un nouvel événement",
+    "tabs": {
+      "events": "Événements créés par moi",
+      "tickets": "Billets achetés",
+      "dashboard": "Tableau de bord"
     },
-    "info": {
-      "welcome": "Bienvenue à toutes les sorties de Diane",
-      "title": [
-        "We inspire",
-        "people to go out more"
-      ],
-      "description": "Les nuits de Diane Out est une série d'événements exceptionnels qui promettent des soirées inoubliables remplies de culture, d'élégance et de divertissement. Plongez-vous dans le monde de l'art, de la musique et de la littérature comme les nuits de Diane Découvrez les talents d'artistes et d'artistes renommés. Nos événements soigneusement sélectionnés se déroulent dans des lieux exclusifs, créant une atmosphère intime et enchanteresse pour vous. Des expositions captivantes aux spectacles captivants, chaque événement est une expérience unique qui vous laissera inspirer et vouloir plus. Rejoignez-nous à Diane's Nights Out et profitez de la beauté des arts."
+    "eventsSection": {
+      "title": "Événements créés par moi",
+      "noEvents": "Pas encore d'événements créés."
     },
-    "infoSecond": {
-      "title": "PARTICIPATION AUX ÉTATS-UNIS",
-      "subtitle": [
-        "Bringing people",
-        "together"
-      ],
-      "description": "Vivez l'apogée de la culture, de l'élégance, du divertissement, de la gastronomie et des repas aux Sorties de Diane. Cette série exceptionnelle d'événements met en valeur les talents d'artistes et d'artistes renommés et vous plonge dans le monde de l'art, de la musique, de la littérature et de la gastronomie. Préparez-vous à être captivant par des expositions captivantes et des spectacles captivants dans des lieux exclusifs, créant une atmosphère intime et enchanteur. Chaque événement est une expérience unique, qui vous inspire et vous laisse désirer plus. Savourez la beauté des arts et rejoignez-nous chez Les Sorties de Diane pour des soirées inoubliables qui enflammeront votre passion."
+    "ticketsSection": {
+      "title": "Billets achetés",
+      "noTickets": "Pas encore de billets."
+    }
+  },
+  "eventCard": {
+    "title": "Événements",
+    "organizedBy": "Organisé par",
+    "searchButton": "Rechercher",
+    "searchResults": "Résultats de la recherche"
+  },
+  "eventDetails": {
+    "eventPosterAlt": "Affiche d'événement",
+    "eventanalytics": "Analyse des événements",
+    "ticketPriceLabel": "Prix du billet :",
+    "ticketPrice": "$",
+    "ticketsOverview": "Aperçu du billet",
+    "totalTickets": "Total des billets :",
+    "ticketsSold": "Billets vendus :",
+    "ticketsRemaining": "Billets restants :",
+    "financialOverview": "Aperçu financier",
+    "pricePerTicket": "Prix par billet:",
+    "totalSales": "Total des ventes :",
+    "editEventButton": "Éditer l'événement",
+    "manageTicketsButton": "Gérer les billets",
+    "viewTicketButton": "Afficher le ticket",
+    "registerButton": "Inscrivez-vous à l'événement"
+  },
+  "stripeDashboard": {
+    "title": "Tableau de bord",
+    "balance": {
+      "sectionTitle": "Solde",
+      "available": "Disponible",
+      "pending": "En attente"
     },
-    "events": {
-      "events": "Événements",
-      "grabyour": "Prenez votre",
-      "seats": "Sièges",
-      "upcoming": "À venir",
-      "all": "Tous",
-      "seemore": "Voir plus"
+    "payouts": {
+      "sectionTitle": "Paiements récents",
+      "noPayouts": "Aucun paiement disponible"
     },
-    "footer": {
-      "companyName": "Sorties de Diane",
-      "tagline": "Votre passerelle vers les événements",
-      "quickLinks": {
-        "title": "Liens rapides",
-        "items": [
-          "Home",
-          "Events",
-          "Contact Us"
-        ]
-      },
-      "userLinks": {
-        "title": "Liens utilisateurs",
-        "items": [
-          "My Account",
-          "Order History",
-          "Tickets"
-        ]
-      },
-      "legal": {
-        "title": "Droit",
-        "items": [
-          "Privacy Policy",
-          "Terms of Service"
-        ]
-      },
-      "socialMedia": [
-        "Facebook",
-        "Twitter",
-        "Instagram"
-      ],
-      "newsletter": {
-        "label": "Abonnez-vous à notre newsletter",
-        "placeholder": "Adresse électronique",
-        "buttonText": "Abonnez-vous"
-      },
-      "copyright": "© {an} Les sorties de Diane. Tous droits réservés."
-    },
-    "contactPage": {
-      "title": "Contactez-nous",
-      "form": {
-        "name": {
-          "label": "Nom",
-          "placeholder": "Votre nom",
-          "error": "Le nom est requis."
-        },
-        "email": {
-          "label": "Courriel",
-          "placeholder": "Votre courriel",
-          "error": "Un courriel est nécessaire.",
-          "invalidError": "Veuillez saisir un courriel valide."
-        },
-        "message": {
-          "label": "Message",
-          "placeholder": "Votre message",
-          "error": "Le message ne peut pas être vide."
-        },
-        "submitButton": {
-          "default": "Envoyer un message",
-          "loading": "Envoi . ."
+    "transactions": {
+      "sectionTitle": "Transactions récentes",
+      "table": {
+        "headers": {
+          "id": "ID",
+          "amount": "Montant",
+          "date": "Date",
+          "status": "Statut",
+          "type": "Type"
         }
-      },
-      "apiError": "Quelque chose a mal tourné. Veuillez réessayer plus tard.",
-      "successMessage": "Merci pour vos commentaires! Nous vous rappellerons bientôt."
-    },
-    "profilePage": {
-      "createEventButton": "Créer un nouvel événement",
-      "tabs": {
-        "events": "Événements créés par moi",
-        "tickets": "Billets achetés"
-      },
-      "eventsSection": {
-        "title": "Événements créés par moi",
-        "noEvents": "Pas encore d'événements créés."
-      },
-      "ticketsSection": {
-        "title": "Billets achetés",
-        "noTickets": "Pas encore de billets."
       }
-    },
-    "eventCard": {
-      "title": "Événements",
-      "organizedBy": "Organisé par",
-      "searchButton": "Rechercher",
-      "searchResults": "Résultats de la recherche"
-    },
-    "eventDetails": {
-      "eventPosterAlt": "Affiche d'événement",
-      "eventanalytics": "Analyse des événements",
-      "ticketPriceLabel": "Prix du billet :",
-      "ticketPrice": "$",
-      "ticketsOverview": "Aperçu du billet",
-      "totalTickets": "Total des billets :",
-      "ticketsSold": "Billets vendus :",
-      "ticketsRemaining": "Billets restants :",
-      "financialOverview": "Aperçu financier",
-      "pricePerTicket": "Prix par billet:",
-      "totalSales": "Total des ventes :",
-      "editEventButton": "Éditer l'événement",
-      "manageTicketsButton": "Gérer les billets",
-      "viewTicketButton": "Afficher le ticket",
-      "registerButton": "Inscrivez-vous à l'événement"
     }
   }
+}
