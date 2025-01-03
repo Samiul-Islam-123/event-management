@@ -32,7 +32,7 @@ const LanguageDropdown = () => {
             value={lang.code}
             className="bg-black bg-opacity-90 text-white"
           >
-            {lang.code}
+             {lang.name}
           </option>
         ))}
       </select>

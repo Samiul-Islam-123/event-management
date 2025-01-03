@@ -4,6 +4,9 @@ import { FullScreenLoader } from "../components/FullScreenLoader";
 import { useTranslation } from "react-i18next";
 import Eng from '../locales/en.json'
 import Fr from '../locales/fr.json'
+import german from "../locales/german.json";
+import dutch from "../locales/dutch.json";
+import spanish from "../locales/spanish.json";
 
 const DataContext = createContext();
 
@@ -114,41 +117,32 @@ export function DataProvider({ children }) {
     i18n.changeLanguage(lng); // Dynamically switch language
   };
   
-
   useEffect(() => {
-    // const startTranslation = async () => {
-      
-    //     await translateAllData(language);
-    //     console.log(defaultTexts)
-    // };
+    switch (language) {
+      case 'EN':
+        setDefaultTexts(Eng);
+        break;
+      case 'FR':
+        setDefaultTexts(Fr);
+        //console.log(language);
+        break;
+      case 'DE':
+        setDefaultTexts(german);
+        break;
+      case 'NL':
+        setDefaultTexts(dutch);
+        break;
+      case 'ES':
+        setDefaultTexts(spanish);
+        break;
+      default:
+        setDefaultTexts(Eng); // Default to English if language is not found
+    }
 
-    // // Change both title[0] and title[1] based on language
-    // setDefaultTexts((prevTexts) => ({
-    //   ...prevTexts,
-    //   hero: {
-    //     ...prevTexts.hero,
-    //     title: [
-    //       language === "en" ? "Live the moment," : "Vivez l'instant,", // title[0] for English or French
-    //       language === "en" ? "Love the experience." : "Aimez l'expérience.", // title[1] for English or French
-    //     ],
-    //   },
-    //   info: {
-    //     ...prevTexts.info,
-    //     title: [
-    //       language === "en" ? "We inspire" : "Nous inspire", // title[0] for English or French
-    //       language === "en" ? "people to go out more" : "les gens à sortir plus"
-    //     ]
-    //   }
-    // }));
-  
-    // startTranslation();
-    // changeLanguage(language)
-
-    // console.log(t(defaultTexts.info.description))
-
-    language === 'en' ? setDefaultTexts(Eng) : setDefaultTexts(Fr)
-
+    console.log(language)
+    
   }, [language]);
+
   
 
   // useEffect(() => {
