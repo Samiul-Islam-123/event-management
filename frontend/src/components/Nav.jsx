@@ -8,6 +8,7 @@ import gsap from "gsap";
 import { ScrollTrigger } from "gsap/ScrollTrigger";
 import { useData } from "../context/DataContext";
 import LanguageToggleSlider from "./ui/LanguageToggleButton";
+import LanguageDropdown from "./ui/LanguageToggleButton";
 
 gsap.registerPlugin(ScrollTrigger);
 
@@ -45,10 +46,7 @@ const Nav = () => {
                 <h2>{defaultTexts.nav.logo}</h2>
             </div>
 
-            {/* Hamburger Icon for Mobile */}
-            <button className="md:hidden text-white text-3xl" onClick={toggleMenu}>
-                {isMenuOpen ? <RiCloseLine /> : <RiMenu3Line />}
-            </button>
+            
 
             {/* Overlay for Dark Background when Menu is Open */}
             {isMenuOpen && (
@@ -140,20 +138,26 @@ const Nav = () => {
                     language === 'en' ? setLanguage('fr') : setLanguage('en')
                 }}>Switch to {language === 'en' ? "French" : "English"} </li> */}
 
-                <li onClick={() => {
-                    language === 'en' ? setLanguage('fr') : setLanguage('en')
-                }}><LanguageToggleSlider /></li>
+                
             </ul>
 
+            <div className=" flex gap-5">
+                <div className=""><LanguageDropdown /></div>
 
+                
 
-            {/* Profile Icon for Desktop */}
-            <div className="profile h-10 w-10 rounded-full bg-black/40 hidden md:flex items-center justify-center" >
+                {/* Hamburger Icon for Mobile */}
+                <button className="md:hidden text-white text-3xl" onClick={toggleMenu}>
+                    {isMenuOpen ? <RiCloseLine /> : <RiMenu3Line />}
+                </button>
+                {/* Profile Icon for Desktop */}
+                <div className="profile h-10 w-10 rounded-full bg-black/40 hidden md:flex items-center justify-center" >
                 {isSignedIn ? (
                     <CustomUserButton />
                 ) : (
                     <a href="/login"><FaUserAlt /></a>
                 )}
+                </div>
             </div>
         </nav>
 

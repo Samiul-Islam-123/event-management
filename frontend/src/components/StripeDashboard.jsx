@@ -84,12 +84,12 @@ const StripeDashboard = () => {
                         {defaultTexts.stripeDashboard.title}
                     </h2>
 
-                    <div className="flex">
+                    <div className="flex md:flex-row flex-col">
                         <div className="py-6 px-10 m-5 border rounded-2xl border-black/10 w-fit">
                             <h3 className="text-3xl font-semibold tracking-tighter mb-5">
                                 {defaultTexts.stripeDashboard.balance.sectionTitle}
                             </h3>
-                            <div className="flex gap-40">
+                            <div className="flex md:gap-40 gap-28">
                                 <div className="">
                                     <h3 className="text-lg">
                                         {defaultTexts.stripeDashboard.balance.available}
@@ -136,7 +136,7 @@ const StripeDashboard = () => {
                         </div>
                     </div>
 
-                    <div className="py-6 px-10 m-5 border rounded-2xl border-black/10">
+                    <div className="py-6 px-10 m-5 border rounded-2xl border-black/10 overflow-auto">
                         <h3 className="text-3xl font-semibold tracking-tighter mb-5">
                             {defaultTexts.stripeDashboard.transactions.sectionTitle}
                         </h3>

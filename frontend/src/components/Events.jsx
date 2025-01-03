@@ -38,9 +38,9 @@ const Events = () => {
 
 
   return (
-    <section className=' w-full min-h-screen md:px-12 px-8'>
+    <section className=' w-full min-h-screen md:pt-10 md:px-12 px-8'>
       <div className=' w-full flex gap-6 flex-col items-center   '>
-        <h1 className='text-2xl text-[#3D004D] md:text-5xl qwigley-regular'>{defaultTexts.events.events}</h1>
+        <h1 className='text-3xl text-[#3D004D] md:text-5xl qwigley-regular'>{defaultTexts.events.events}</h1>
         <h1 className="text-4xl md:text-5xl font-semibold">{defaultTexts.events.grabyour} <span className=" text-[#E167FF]">{defaultTexts.events.seats}</span></h1>
       </div>
 

@@ -67,7 +67,7 @@ const Info = () => {
 
     return (
         <section className="info w-full min-h-screen">
-            <div className="w-full h-[12vh] border-[#3D004D] border flex items-center justify-center qwigley-regular text-2xl md:text-5xl text-[#3D004D]">
+            <div className="w-full h-[12vh] border-[#3D004D] border flex items-center justify-center qwigley-regular text-3xl md:text-5xl text-[#3D004D]">
                 <h1>{defaultTexts.info.welcome}</h1>{/**Welcome everyone to Diane's outings */}
             </div>
 
