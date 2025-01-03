@@ -18,6 +18,8 @@ import RegisterEvent from './pages/private/RegisterEvent';
 import SuccessSplit from './pages/payment/SuccessSplit';
 import ContactPage from './pages/public/ContactPage';
 import EditEvent from './components/EditEvent';
+import AdminRouteGuard from './pages/private/AdminRouteGuard';
+import AdminPanel from './pages/private/AdminPanel';
 
 function RoutesManager() {
   const { isSignedIn, isLoaded, user } = useUser(); // Get the user object for additional info
@@ -94,6 +96,13 @@ function RoutesManager() {
       
       <Route path="/app/eventDetails/:eventID" element={isSignedIn ? <EventsDetails /> : <Navigate to="/login" />} />
       <Route path="/app/edit-Event/:eventID" element={isSignedIn ? <EditEvent /> : <Navigate to="/login" />} />
+      
+      {/* Admin Panel Routes */}
+      <Route path="/admin" element={<AdminRouteGuard>
+
+        <AdminPanel />
+
+      </AdminRouteGuard>} />
       
 
       {/* Catch-all Route */}
