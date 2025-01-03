@@ -66,7 +66,7 @@ const Info = () => {
     }, []);
 
     return (
-        <section className="info w-full min-h-screen">
+        <section className="info w-full min-h-screen z-30">
             <div className="w-full h-[12vh] border-[#3D004D] border flex items-center justify-center qwigley-regular text-3xl md:text-5xl text-[#3D004D]">
                 <h1>{defaultTexts.info.welcome}</h1>{/**Welcome everyone to Diane's outings */}
             </div>
@@ -92,8 +92,8 @@ const Info = () => {
                     {/**We inspire
                         people to go out more */}
                     <div className="mb-8 md:mb-14">
-                        <h1 className="text-4xl md:text-5xl font-semibold">
-                            {defaultTexts.info.title[0]} <span className="text-[#E167FF]">{defaultTexts.info.title[1]}</span>
+                        <h1 className="text-4xl md:text-5xl font-semibold ">
+                            {defaultTexts.info.title[0]} <span className="text-[#FF8317]">{defaultTexts.info.title[1]}</span>
                         </h1>
                         <h1 className="text-4xl md:text-5xl font-semibold">
                             {defaultTexts.info.title[2]}
@@ -101,7 +101,7 @@ const Info = () => {
                     </div>
 
                     <div>
-                        <p className="text-sm md:text-lg">
+                        <p className="text-sm md:text-lg z-[3]">
                             {defaultTexts.info.description}
                         </p>
                     </div>

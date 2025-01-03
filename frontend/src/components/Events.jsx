@@ -38,19 +38,20 @@ const Events = () => {
 
 
   return (
-    <section className=' w-full min-h-screen md:pt-10 md:px-12 px-8'>
-      <div className=' w-full flex gap-6 flex-col items-center   '>
+    <section className=' w-full min-h-screen md:pt-10 '>
+
+      <div className=' w-full flex gap-6 flex-col items-center p-5 border-[#fff] border bg-white/70 shadow-2xl z-20'>
         <h1 className='text-3xl text-[#3D004D] md:text-5xl qwigley-regular'>{defaultTexts.events.events}</h1>
-        <h1 className="text-4xl md:text-5xl font-semibold">{defaultTexts.events.grabyour} <span className=" text-[#E167FF]">{defaultTexts.events.seats}</span></h1>
+        <h1 className="text-4xl md:text-5xl font-semibold">{defaultTexts.events.grabyour} <span className=" text-[#7BA5FF]">{defaultTexts.events.seats}</span></h1>
       </div>
 
-      <div className='w-full flex-col flex min-h-screen py-20 '>
+      <div className='w-full flex-col flex min-h-screen py-20 md:px-12 px-8'>
         <div className=' w-full flex items-center justify-between min-h-[42vh]  md:pl-12  flex-col mb-16'>
           <div className=' flex flex-col w-[80%]'>
             <div className='w-full'><h1 className=' md:text-4xl text-3xl text-[#3D004D] font-semibold mb-3'>{defaultTexts.events.upcoming} <br /> {defaultTexts.events.events}</h1>
             <hr className=' border-[2.5px] border-[#3D004D] w-16' /></div>
           </div>
-          <div className=' w-[75vw] h-full bg-white flex items-center flex-wrap justify-center md:justify-start'>
+          <div className=' w-[75vw] h-full  flex items-center flex-wrap justify-center md:justify-start'>
             {upcomingEvents.map(event => (
               <EventCard key={event.id} {...event} />
             ))}
@@ -64,7 +65,7 @@ const Events = () => {
             <hr className=' border-[2.5px] border-[#3D004D] w-16' /></div>
           </div>
 
-          <div className=' w-[75vw] h-full bg-white flex items-center flex-wrap justify-center md:justify-start'>
+          <div className=' w-[75vw] h-full flex items-center flex-wrap justify-center md:justify-start'>
             {/* <EventCard /> 
               <EventCard /> 
               <EventCard /> 

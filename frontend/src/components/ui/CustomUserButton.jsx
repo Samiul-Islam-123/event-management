@@ -4,6 +4,7 @@ import { useState } from 'react';
 
 function CustomUserButton() {
   const { user } = useUser();
+  const pfp = user.imageUrl
   const navigate = useNavigate();
   const [isOpen, setIsOpen] = useState(false);
   const [timeoutId, setTimeoutId] = useState(null);
@@ -27,14 +28,17 @@ function CustomUserButton() {
 
   return (
     <div className="relative" onMouseEnter={handleMouseEnter} onMouseLeave={handleMouseLeave}>
-      <UserButton appearance={{
+      {/* <UserButton appearance={{
     elements: {
       userButtonAvatarBox: {
         width: 40,
         height: 40,
       },
     },
-  }} afterSignOutUrl="/" />
+  }} afterSignOutUrl="/" /> */}
+      <div className='pfp h-10 w-10 rounded-full bg-black/40 overflow-hidden flex items-center justify-center'>
+        <img src={pfp} alt="" />
+      </div>
       
       {isOpen && (
         <div className="absolute right-0 mt-2 w-48 bg-white rounded-md shadow-lg z-10">
