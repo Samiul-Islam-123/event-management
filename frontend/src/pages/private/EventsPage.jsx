@@ -9,7 +9,7 @@ function EventsPage() {
   const [searchQuery, setSearchQuery] = useState("");
   const [searchResults, setSearchResults] = useState([]);
   const [upcomingEvents, setUpcomingEvents] = useState([]);
-  const { defaultTexts , setLoading} = useData();
+  const { defaultTexts, setLoading } = useData();
 
   const fetchEvents = async () => {
     try {
@@ -21,7 +21,6 @@ function EventsPage() {
         alert(defaultTexts.eventCard.apiError || "Something went wrong :(");
       }
       setLoading(false);
-
     } catch (error) {
       console.error("Error fetching events:", error);
       alert(defaultTexts.eventCard.apiError || "Something went wrong :(");
@@ -33,6 +32,11 @@ function EventsPage() {
   }, []);
 
   const handleSearch = (query) => {
+    if (!query.trim()) {
+      setSearchResults([]); // Clear results if the query is empty
+      return;
+    }
+
     const results = upcomingEvents.filter((event) => {
       const nameMatch = event?.name?.toLowerCase().includes(query.toLowerCase());
       const descriptionMatch = event?.description
@@ -43,6 +47,7 @@ function EventsPage() {
         .includes(query.toLowerCase());
       return nameMatch || descriptionMatch || organizerMatch;
     });
+
     setSearchResults(results);
   };
 
@@ -54,6 +59,20 @@ function EventsPage() {
     const debounceTimeout = setTimeout(() => handleSearch(query), 300);
     return () => clearTimeout(debounceTimeout);
   };
+
+  // Sort events: upcoming first (future dates), then old events (past dates)
+  const sortedEvents = upcomingEvents
+    ? [
+        // Upcoming events
+        ...upcomingEvents
+          .filter((event) => new Date(event.date) > new Date())
+          .sort((a, b) => new Date(a.date) - new Date(b.date)),
+        // Past events
+        ...upcomingEvents
+          .filter((event) => new Date(event.date) <= new Date())
+          .sort((a, b) => new Date(b.date) - new Date(a.date)),
+      ]
+    : [];
 
   return (
     <div className="container mx-auto px-4 py-8 pt-[30vh] md:pt-[45vh]">
@@ -85,7 +104,8 @@ function EventsPage() {
         </button>
       </form>
 
-      {searchResults.length > 0 && (
+      {/* Only show search results if there is a query */}
+      {searchQuery.trim() && searchResults.length > 0 && (
         <div className="mb-8">
           <h2 className="text-2xl font-semibold mb-4">
             {defaultTexts.eventCard.searchResults}
@@ -99,13 +119,14 @@ function EventsPage() {
       )}
 
       {/* Separation line between search results and upcoming events */}
-      {searchResults.length > 0 && <hr className="my-8 border-gray-300" />}
+      {searchQuery.trim() && searchResults.length > 0 && (
+        <hr className="my-8 border-gray-300" />
+      )}
 
       <div className="flex flex-wrap gap-6">
-        {upcomingEvents &&
-          upcomingEvents
-            .sort((a, b) => new Date(a.date) - new Date(b.date))
-            .map((event) => <EventCard key={event.id} {...event} />)}
+        {sortedEvents.map((event) => (
+          <EventCard key={event.id} {...event} />
+        ))}
       </div>
     </div>
   );

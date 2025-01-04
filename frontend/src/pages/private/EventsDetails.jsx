@@ -4,10 +4,12 @@ import { useNavigate, useParams } from "react-router-dom";
 import axios from "axios";
 import { CiCalendar, CiLocationOn } from "react-icons/ci";
 import { VscOrganization } from "react-icons/vsc";
-import { FaRegCalendar } from "react-icons/fa";
+import { FaRegCalendar, FaRegClock, FaRegUser } from "react-icons/fa";
 import { IoLocationOutline } from "react-icons/io5";
 import RegisterForm from "./RegisterEvent";
 import { useData } from "../../context/DataContext";
+import {FaPlayCircle } from "react-icons/fa"
+
 
 const EventsDetails = () => {
     const { eventID } = useParams();
@@ -15,7 +17,7 @@ const EventsDetails = () => {
     const navigate = useNavigate();
     const [ticketQuantity, setTicketQuantity] = useState(1);
     const [isBought, setIsBought] = useState(false);
-    const {defaultTexts, setDefaultTexts, setLoading} = useData();
+    const { defaultTexts, setDefaultTexts, setLoading } = useData();
 
 
     const fetchEventDetails = async () => {
@@ -83,6 +85,16 @@ const EventsDetails = () => {
                                     <h2 className="text-xl font-medium">{details.organizer.username}</h2>
                                 </div>
 
+                                {/* Email Section */}
+                                <div className="flex items-center gap-4 text-gray-600">
+                                    <FaRegUser size={28} />
+                                    <h2 className="text-xl font-medium">
+                                        <a href={`mailto:${details.organizer.email}`} className="text-blue-500 hover:underline">
+                                            {details.organizer.email}
+                                        </a>
+                                    </h2>
+                                </div>
+
                                 {/* Date */}
                                 <div className="flex items-center gap-4 text-gray-600">
                                     <FaRegCalendar size={28} />
@@ -94,6 +106,68 @@ const EventsDetails = () => {
                                         })}
                                     </h2>
                                 </div>
+
+                                {/* Start time - End time */}
+                                {(details.startTime && details.endTime) && (<>
+                                    <div className="flex items-center gap-4 text-gray-600">
+                                        <FaRegClock size={28} />
+                                        {console.log(details.startTime, details.endTime)}
+
+                                        <h2 className="text-xl font-medium">
+                                            {(() => {
+                                                const startTime = details.startTime.split(" "); // Splitting by space if needed
+                                                const startDate = new Date();
+                                                const [startHour, startMinute] = startTime[0].split(":");
+                                                startDate.setHours(startHour, startMinute, 0, 0); // Set hours and minutes for the start time
+
+                                                const endTime = details.endTime.split(" ");
+                                                const endDate = new Date();
+                                                const [endHour, endMinute] = endTime[0].split(":");
+                                                endDate.setHours(endHour, endMinute, 0, 0); // Set hours and minutes for the end time
+
+                                                return (
+                                                    <>
+                                                        {startDate.toLocaleTimeString("en-US", { hour: "2-digit", minute: "2-digit" })} - 
+                                                        { endDate.toLocaleTimeString("en-US", { hour: "2-digit", minute: "2-digit" })}
+                                                    </>
+                                                );
+                                            })()}
+                                        </h2>
+                                    </div>
+                                    <>
+                                    {(() => {
+                                        // Convert startTime and endTime strings to Date objects
+                                        const [startHour, startMinute] = details.startTime.split(":");
+                                        const [endHour, endMinute] = details.endTime.split(":");
+
+                                        const currentDate = new Date();
+                                        const startDate = new Date(currentDate);
+                                        const endDate = new Date(currentDate);
+
+                                        // Set the time for start and end dates
+                                        startDate.setHours(parseInt(startHour), parseInt(startMinute), 0, 0);
+                                        endDate.setHours(parseInt(endHour), parseInt(endMinute), 0, 0);
+
+                                        // Get current time
+                                        const currentTime = new Date();
+
+                                        // Check if current time is between startTime and endTime
+                                        if (currentTime >= startDate && currentTime <= endDate) {
+                                            return (
+                                                <div className="w-fit flex items-center text-white bg-green-500 px-4 py-2 rounded-lg shadow-md">
+                                                    <FaPlayCircle size={20} className="mr-2" />
+                                                    <p className="font-semibold">Live</p>
+                                                </div>
+                                            );
+                                        } else {
+                                            return null;
+                                        }
+                                    })()}
+                                </>
+                                </>)}
+
+
+
 
                                 {/* Location */}
                                 <div className="flex items-center gap-4 text-gray-600">
@@ -150,30 +224,30 @@ const EventsDetails = () => {
 
                                         {/* Action Buttons */}
                                         <div className="space-x-4 mt-6">
-                                            <button onClick={()=>[
-                                                navigate('/app/edit-Event/'+eventID)
+                                            <button onClick={() => [
+                                                navigate('/app/edit-Event/' + eventID)
                                             ]} className="bg-blue-500 text-white p-3 rounded-lg">
-                                            {defaultTexts.eventDetails.editEventButton}
+                                                {defaultTexts.eventDetails.editEventButton}
                                             </button>
-                                            <button onClick={async() => {
+                                            <button onClick={async () => {
                                                 const confirmation = confirm("Sure ?")
-                                                if(confirmation){
+                                                if (confirmation) {
 
                                                     const response = await axios.delete(`${import.meta.env.VITE_API_URL}/event/${details._id}`)
-                                                    if(response.data.success === true)
+                                                    if (response.data.success === true)
                                                         navigate('/app/profile')
-                                                    
-                                                    else{
+
+                                                    else {
                                                         console.log(response.data);
                                                         alert(response.data.message)
                                                     }
                                                 }
                                             }} className="bg-blue-500 text-white p-3 rounded-lg">
-                                            Delete event
+                                                Delete event
                                             </button>
                                         </div>
 
-                                       
+
                                     </div>
                                 </div>
                             ) : (

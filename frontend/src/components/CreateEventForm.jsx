@@ -8,13 +8,15 @@ import { useData } from '../context/DataContext';
 function CreateEventForm({ onCancel }) {
   const { user } = useUser();
   const { setData } = useFormData();
-  const navigate = useNavigate()
-  const {loading, setLoading} = useData();
+  const navigate = useNavigate();
+  const { loading, setLoading } = useData();
 
   const [formData, setFormData] = useState({
     name: '',
     description: '',
     date: '',
+    startTime: '',
+    endTime: '', // Adding startTime and endTime fields
     limit: '',
     location: '',
     price: '',
@@ -39,13 +41,13 @@ function CreateEventForm({ onCancel }) {
     setPoster(e.target.files[0]); // Capture the selected poster file
   };
 
-
-
   const validateForm = () => {
     let newErrors = {};
     if (!formData.name) newErrors.name = 'Event name is required';
     if (!formData.description) newErrors.description = 'Description is required';
     if (!formData.date) newErrors.date = 'Date is required';
+    if (!formData.startTime) newErrors.startTime = 'Start time is required'; // Validation for startTime
+    if (!formData.endTime) newErrors.endTime = 'End time is required'; // Validation for endTime
     if (!formData.limit) newErrors.limit = 'Attendee limit is required';
     if (!formData.location) newErrors.location = 'Location is required';
     if (!formData.price) newErrors.price = 'Ticket price is required';
@@ -53,12 +55,9 @@ function CreateEventForm({ onCancel }) {
     return newErrors;
   };
 
-
   const handleSubmit = async (e) => {
     e.preventDefault();
     setLoading(true);
-
-    
 
     const newErrors = validateForm();
     if (Object.keys(newErrors).length > 0) {
@@ -81,33 +80,14 @@ function CreateEventForm({ onCancel }) {
         if (posterResponse.data.success) {
           console.log("Poster uploaded successfully:", posterResponse.data.url);
           formData.posterURL = posterResponse.data.url;
-          //console.log(formData)
 
-          const EventResponse = await axios.post(`${import.meta.env.VITE_API_URL}/event`, formData)
-          console.log(EventResponse)
+          const EventResponse = await axios.post(`${import.meta.env.VITE_API_URL}/event`, formData);
+          console.log(EventResponse);
           if (EventResponse.data.success === true) {
-            //sessionStorage.removeItem("formData");
             navigate('/app/profile');
+          } else {
+            alert(EventResponse.data.message);
           }
-          else {
-            alert(EventResponse.data.message)
-            console.log(EventResponse.data)
-            //cancel the payment
-            //navigate('/app/profile');
-
-          }
-          // setFormData(async(prevData) => {
-          //   const updatedData = {
-          //     ...prevData,
-          //     posterURL: posterResponse.data.url,
-          //   };
-          //   console.log("Updated formData:", updatedData); // Log immediately after update
-          //   setData(updatedData)
-
-
-          //   //sessionStorage.setItem('formData', JSON.stringify(updatedData));
-          //   return updatedData;
-          // });
         } else {
           throw new Error('Failed to upload poster');
         }
@@ -115,26 +95,13 @@ function CreateEventForm({ onCancel }) {
         console.error("Error uploading poster:", error.message);
       }
 
-      console.log("Final formData after update:", formData); // May still show the old state here
-
-
-
-      // Store the updated formData in session storage
-
-      // const response = await axios.post(`${import.meta.env.VITE_API_URL}/payment/checkout-session`, {
-      //   price: 20, // $20 for creating event
-      //   name: formData.name
-      // }, {
-      //   headers: { 'Content-Type': 'application/json' }
-      // });
-
-      // console.log(response);
-
       // Reset form after submission
       setFormData({
         name: '',
         description: '',
         date: '',
+        startTime: '',
+        endTime: '',
         limit: '',
         location: '',
         price: '',
@@ -143,20 +110,13 @@ function CreateEventForm({ onCancel }) {
       setPoster(null);
       setQrCode(null);
       setErrors({});
-
-      // if (response.data.success) {
-      //   window.location.href = response.data.url;
-      // } else {
-      //   alert(response.data.message);
-      // }
-
       onCancel();
     } catch (error) {
       console.error('Error creating event:', error);
       alert('Failed to create event. Please try again.');
     }
 
-    setLoading(false)
+    setLoading(false);
   };
 
   const handleCancel = () => {
@@ -164,6 +124,8 @@ function CreateEventForm({ onCancel }) {
       name: '',
       description: '',
       date: '',
+      startTime: '',
+      endTime: '',
       limit: '',
       location: '',
       price: '',
@@ -216,6 +178,32 @@ function CreateEventForm({ onCancel }) {
             className="mt-1 block w-full rounded-md border-gray-200 border shadow-sm focus:border-purple-500 focus:ring focus:ring-purple-500 focus:ring-opacity-50"
           />
           {errors.date && <p className="mt-2 text-sm text-red-600">{errors.date}</p>}
+        </div>
+
+        <div className="mb-4">
+          <label htmlFor="startTime" className="block text-sm font-medium text-gray-700">Start Time</label>
+          <input
+            type="time"
+            id="startTime"
+            name="startTime"
+            value={formData.startTime}
+            onChange={handleChange}
+            className="mt-1 block w-full rounded-md border-gray-200 border shadow-sm focus:border-purple-500 focus:ring focus:ring-purple-500 focus:ring-opacity-50"
+          />
+          {errors.startTime && <p className="mt-2 text-sm text-red-600">{errors.startTime}</p>}
+        </div>
+
+        <div className="mb-4">
+          <label htmlFor="endTime" className="block text-sm font-medium text-gray-700">End Time</label>
+          <input
+            type="time"
+            id="endTime"
+            name="endTime"
+            value={formData.endTime}
+            onChange={handleChange}
+            className="mt-1 block w-full rounded-md border-gray-200 border shadow-sm focus:border-purple-500 focus:ring focus:ring-purple-500 focus:ring-opacity-50"
+          />
+          {errors.endTime && <p className="mt-2 text-sm text-red-600">{errors.endTime}</p>}
         </div>
 
         <div className="mb-4">
@@ -272,11 +260,9 @@ function CreateEventForm({ onCancel }) {
           {errors.poster && <p className="mt-2 text-sm text-red-600">{errors.poster}</p>}
         </div>
 
-
-
         <div className="mt-6 flex space-x-4">
           <button
-          disabled={loading}
+            disabled={loading}
             type="submit"
             className="w-full px-4 py-2 bg-purple-600 text-white rounded-md hover:bg-purple-700 focus:outline-none focus:ring-2 focus:ring-purple-500 focus:ring-offset-2"
           >

@@ -12,6 +12,9 @@ const LanguageDropdown = () => {
     { code: "ES", name: "Spain", flag: "🇪🇸" },
     { code: "DE", name: "German", flag: "🇩🇪" },
     { code: "NL", name: "Dutch", flag: "🇯🇵" },
+    { code: "PS", name: "Portuges", flag: "🇯🇵" },
+    { code: "IT", name: "Italian", flag: "🇯🇵" },
+    
   ];
 
   const handleLanguageChange = (e) => {

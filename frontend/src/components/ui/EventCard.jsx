@@ -1,8 +1,9 @@
 import React from "react";
 import { useNavigate } from "react-router-dom";
 import { useData } from "../../context/DataContext";
+import {FaPlayCircle } from "react-icons/fa"
 
-const EventCard = ({ _id, name, description, date, organizer, price, poster, location }) => {
+const EventCard = ({ _id, name, description, date, organizer, price, poster, location, startTime, endTime }) => {
 
     const { defaultTexts } = useData();
     const navigate = useNavigate();
@@ -16,9 +17,45 @@ const EventCard = ({ _id, name, description, date, organizer, price, poster, loc
                 <img src={poster} alt="event poster" className=" object-cover h-full w-full" />
             </div>
             <div className=" p-3 flex flex-col justify-between flex-1">
+                <div className=" flex justify-between">
                 <h1 className=" text-xl font-semibold">
                     {name}
                 </h1>
+                {
+                            (startTime && endTime) && (
+                                <>
+                                    {(() => {
+                                        // Convert startTime and endTime strings to Date objects
+                                        const [startHour, startMinute] = startTime.split(":");
+                                        const [endHour, endMinute] = endTime.split(":");
+
+                                        const currentDate = new Date();
+                                        const startDate = new Date(currentDate);
+                                        const endDate = new Date(currentDate);
+
+                                        // Set the time for start and end dates
+                                        startDate.setHours(parseInt(startHour), parseInt(startMinute), 0, 0);
+                                        endDate.setHours(parseInt(endHour), parseInt(endMinute), 0, 0);
+
+                                        // Get current time
+                                        const currentTime = new Date();
+
+                                        // Check if current time is between startTime and endTime
+                                        if (currentTime >= startDate && currentTime <= endDate) {
+                                            return (
+                                                <div className="flex items-center text-green-500">
+                                                    <FaPlayCircle size={20} className="mr-2" />
+                                                    <p>Live</p>
+                                                </div>
+                                            );
+                                        } else {
+                                            return null;
+                                        }
+                                    })()}
+                                </>
+                            )
+                }
+                </div>
                 <p className=" opacity-70">
                     {truncateText(description, 45)} {/* Adjust the max length as needed */}
                 </p>
@@ -40,6 +77,8 @@ const EventCard = ({ _id, name, description, date, organizer, price, poster, loc
                     </p>
                     <p className="text-2xl font-semibold text-[#E167FF]">
                         ${price}
+                        
+
                     </p>
                 </div>
             </div>

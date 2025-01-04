@@ -7,6 +7,8 @@ import Fr from '../locales/fr.json'
 import german from "../locales/german.json";
 import dutch from "../locales/dutch.json";
 import spanish from "../locales/spanish.json";
+import italian from "../locales/italain.json";
+import portuguese from "../locales/portuges.json";
 
 const DataContext = createContext();
 
@@ -135,6 +137,12 @@ export function DataProvider({ children }) {
       case 'ES':
         setDefaultTexts(spanish);
         break;
+        case 'IT':
+          setDefaultTexts(italian);
+          break;
+          case 'PS':
+            setDefaultTexts(portuguese);
+            break;
       default:
         setDefaultTexts(Eng); // Default to English if language is not found
     }
