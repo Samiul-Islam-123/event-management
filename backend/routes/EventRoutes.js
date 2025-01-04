@@ -353,18 +353,16 @@ EventRouter.delete('/:id', async (req, res) => {
         try {
             const deletedEvent = await EventModel.findById(id);
 
-            if(deletedEvent && deletedEvent.tickets.length ===0){
-                await EventModel.findByIdAndRemove(id);
+            if(deletedEvent && deletedEvent.tickets.length === 0) {
+                await EventModel.findByIdAndDelete(id);  // Use findByIdAndDelete instead of findByIdAndRemove
                 res.json({
                     success: true,
                     message: "Event deleted successfully"
                 });
-            }
-
-             else {
+            } else {
                 res.json({
                     success: false,
-                    message: "Event not found"
+                    message: "Event not found or it has tickets"
                 });
             }
         } catch (error) {
