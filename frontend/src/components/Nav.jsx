@@ -78,7 +78,7 @@ const Nav = () => {
                 </div>
 
                 {/* Menu Items for mobo*/}
-                <ul className="flex flex-col gap-6 font-semibold text-lg px-6 mt-8">
+                <ul className="flex flex-col gap-6 font-semibold text-lg px-6 mt-8 ">
                     <li className="cursor-pointer" onClick={() => {
                         setIsMenuOpen(false)
                         navigate('/')
@@ -105,7 +105,7 @@ const Nav = () => {
             </div>
 
             {/* Desktop Menu */}
-            <ul className="hidden md:flex gap-10 font-semibold text-lg">
+            <ul className="hidden md:flex gap-10 font-semibold text-lg ml-36">
                 <li style={{
                     cursor: "pointer"
                 }} onClick={() => {
@@ -142,6 +142,9 @@ const Nav = () => {
             </ul>
 
             <div className=" flex gap-5">
+
+                <button className=" bg-black px-4 py-2 rounded-xl text-sm tracking-tighter">Create Event</button>
+
                 <div className=""><LanguageDropdown /></div>
 
                 

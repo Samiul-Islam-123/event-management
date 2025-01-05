@@ -71,7 +71,7 @@ const Info = () => {
                 <h1>{defaultTexts.info.welcome}</h1>{/**Welcome everyone to Diane's outings */}
             </div>
 
-            <div className="flex w-full justify-center h-[88vh] flex-wrap md:gap-32 items-center">
+            <div className="flex w-full justify-center h-full flex-1 flex-wrap md:gap-32 items-center">
                 <div className="md:w-[30vw] md:h-[30vw] w-[75vw] h-[75vw] relative mt-12">
                     <div
                         ref={img1Ref}
