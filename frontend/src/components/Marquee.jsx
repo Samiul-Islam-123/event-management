@@ -36,8 +36,8 @@ const Marquee = () => {
         );
     }, []);
     return (
-        <section className="w-screen md:h-[50vh] h-[35vh] flex items-center justify-center ">
-        <div className="marqueeCont scale-[1.3] text-3xl md:text-5xl  w-[100vw] h-[65vh] overflow-hidden">
+        <section className="w-screen md:h-[50vh] h-[50vh] flex items-center justify-center ">
+        <div className="marqueeCont scale-[1.3] text-3xl md:text-5xl  w-[100vw] h-full overflow-hidden">
             {/* <div className="heading absolute top-[5%] left-1/2 -translate-x-1/2 w-60 text-center">
                 <h1 className=" text-xl font-regular">
                     Crafting a new paradigm of healthcare, one that is
