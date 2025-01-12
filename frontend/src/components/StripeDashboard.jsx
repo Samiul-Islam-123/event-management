@@ -9,6 +9,7 @@ const StripeDashboard = () => {
     const [stripeData, setStripeData] = useState(null);
     const [isPayoutProcessing, setIsPayoutProcessing] = useState(false);
     const [userData, setUserData] = useState();
+    const [message, setMessage] = useState("")
 
     async function fetchData() {
         setLoading(true);
@@ -22,6 +23,7 @@ const StripeDashboard = () => {
             } else {
                 console.log(response.data);
                 alert(response.data.message);
+                setMessage(response.data.message)
             }
         } catch (err) {
             throw err;
@@ -78,7 +80,7 @@ const StripeDashboard = () => {
 
     return (
         <div className="flex flex-col">
-            {stripeData && (
+            {stripeData ? (
                 <>
                     <h2 className="text-2xl font-semibold mb-4">
                         {defaultTexts.stripeDashboard.title}
@@ -190,7 +192,9 @@ const StripeDashboard = () => {
                         </div>
                     </div>
                 </>
-            )}
+            ) : (<>
+                <p1>{message}</p1>
+            </>)}
         </div>
     );
 };

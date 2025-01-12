@@ -277,35 +277,39 @@ PaymentRouter.get('/details/:clerkID', async (req, res) => {
     }
 
     const organizerStripeID = user.stripe_id;
+    console.log(`Organizer stripe ID : ${organizerStripeID}`)
 
-    // Fetch account details
-    const accountDetails = await stripe.accounts.retrieve(organizerStripeID);
+    if(organizerStripeID){
 
-    // Fetch account balance
-    const balance = await stripe.balance.retrieve({
-      stripeAccount: organizerStripeID,
-    });
-
-    // Fetch recent transactions
-    const transactions = await stripe.balanceTransactions.list(
-      { limit: 10 }, // Limit to the latest 10 transactions
-      { stripeAccount: organizerStripeID }
-    );
-
-    // Fetch recent payouts
-    const payouts = await stripe.payouts.list(
-      { limit: 10 }, // Limit to the latest 10 payouts
-      { stripeAccount: organizerStripeID }
-    );
-
-    // Organize the balance information (total available balance, pending, etc.)
-    const availableBalance = balance.available.reduce((acc, item) => acc + item.amount, 0) / 100; // In EUR or other currency
-    const pendingBalance = balance.pending.reduce((acc, item) => acc + item.amount, 0) / 100; // In EUR or other currency
-
-    // Send the response with all the details
-    res.json({
-      success: true,
-      message: 'Organizer Stripe account details retrieved successfully',
+      
+      // Fetch account details
+      const accountDetails = await stripe.accounts.retrieve(organizerStripeID);
+      
+      // Fetch account balance
+      const balance = await stripe.balance.retrieve({
+        stripeAccount: organizerStripeID,
+      });
+      
+      // Fetch recent transactions
+      const transactions = await stripe.balanceTransactions.list(
+        { limit: 10 }, // Limit to the latest 10 transactions
+        { stripeAccount: organizerStripeID }
+      );
+      
+      // Fetch recent payouts
+      const payouts = await stripe.payouts.list(
+        { limit: 10 }, // Limit to the latest 10 payouts
+        { stripeAccount: organizerStripeID }
+      );
+      
+      // Organize the balance information (total available balance, pending, etc.)
+      const availableBalance = balance.available.reduce((acc, item) => acc + item.amount, 0) / 100; // In EUR or other currency
+      const pendingBalance = balance.pending.reduce((acc, item) => acc + item.amount, 0) / 100; // In EUR or other currency
+      
+      // Send the response with all the details
+      res.json({
+        success: true,
+        message: 'Organizer Stripe account details retrieved successfully',
       data: {
         //accountDetails,
         balance: {
@@ -316,6 +320,14 @@ PaymentRouter.get('/details/:clerkID', async (req, res) => {
         payouts: payouts.data,
       },
     });
+  }
+
+  else{
+    res.json({
+      success: false,
+      message: 'Organizer Stripe account has not been created yet',
+    })
+  }
   } catch (error) {
     console.error('Error fetching organizer Stripe details:', error);
     res.status(500).json({

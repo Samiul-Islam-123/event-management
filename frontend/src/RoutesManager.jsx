@@ -40,16 +40,16 @@ function RoutesManager() {
 
   const checkIfUserExists = async (user) => {
       //console.log(`${import.meta.env.VITE_API_URL}/user/check`);
-      //console.log(user.emailAddresses[0].emailAddress)
+      console.log(user.emailAddresses[0].emailAddress)
     try {
       const response = await axios.post(`${import.meta.env.VITE_API_URL}/user/check`, {
         email: user.emailAddresses[0].emailAddress, // Adjust based on your user object structure
       });
       console.log(response.data);
 
-      if (!response.data.exists) {
+      if (!(response.data.exists === true)) {
         // If the user does not exist, send their data to the server
-        //alert('User does not exist, sending user data to server...'); // Alert before sending data
+        alert('User does not exist, sending user data to server...'); // Alert before sending data
         sendUserDataToServer(user);
       } else {
         localStorage.setItem('user_id',response.data.user._id)
@@ -63,13 +63,23 @@ function RoutesManager() {
   };
 
   const sendUserDataToServer = async (user) => {
+    console.log("saving data...");
+    console.log({
+      email: user.emailAddresses[0].emailAddress, // Adjust based on your user object structure
+        username: user.fullName || user.username,
+        clerkID: user.id
+    })
     try {
       const response = await axios.post(`${import.meta.env.VITE_API_URL}/user`, {
         email: user.emailAddresses[0].emailAddress, // Adjust based on your user object structure
-        username: user.fullName,
+        username: user.fullName || user.username,
         clerkID: user.id
       });
+      if(response.data.success === true)
       console.log('User data saved successfully:', response.data);
+
+      else
+      alert(response.data.message)
       //alert('User data saved successfully!'); // Alert on success
     } catch (error) {
       console.error('Error saving user data:', error);
@@ -85,8 +95,8 @@ function RoutesManager() {
     <Routes>
       {/* Public Routes */}
       <Route path="/" element={<LandingPage />} />
-      <Route path="/login" element={<LoginPage />} />
-      <Route path="/signup" element={<SignupPage />} />
+      <Route path="/login/*" element={<LoginPage />} />
+      <Route path="/signup/*" element={<SignupPage />} />
       <Route path='/contact-us' element={<ContactPage />} />
 
       {/* Protected Routes */}
