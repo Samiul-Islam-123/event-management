@@ -143,7 +143,9 @@ const Nav = () => {
 
             <div className=" flex gap-5">
 
-                <button className=" bg-black px-4 py-2 rounded-xl text-sm tracking-tighter">Create Event</button>
+                {/* <button onClick={() => {
+                    navigate('/app/profile')
+                }} className=" bg-black px-4 py-2 rounded-xl text-sm tracking-tighter">Create Event</button> */}
 
                 <div className=""><LanguageDropdown /></div>
 

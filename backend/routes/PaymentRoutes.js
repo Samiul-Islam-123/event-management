@@ -277,7 +277,6 @@ PaymentRouter.get('/details/:clerkID', async (req, res) => {
     }
 
     const organizerStripeID = user.stripe_id;
-    console.log(`Organizer stripe ID : ${organizerStripeID}`)
 
     if(organizerStripeID){
 
