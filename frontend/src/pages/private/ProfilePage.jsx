@@ -125,7 +125,7 @@ function ProfilePage() {
         </div>
       </div>
 
-      <Modal isOpen={isCreatingEvent} onClose={() => setIsCreatingEvent(false)}>
+      <Modal  isOpen={isCreatingEvent} onClose={() => setIsCreatingEvent(false)}>
         <CreateEventForm onCancel={() => setIsCreatingEvent(false)} />
       </Modal>
 

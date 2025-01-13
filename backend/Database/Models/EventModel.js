@@ -44,7 +44,7 @@ const EventSchema = new mongoose.Schema({
     },
     qrURL : String,
     price : {
-        type : Number,
+        type : mongoose.Schema.Types.Mixed,
         required : true
     }
 }, { timestamps: true }); // Adds createdAt and updatedAt fields automatically

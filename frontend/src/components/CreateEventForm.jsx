@@ -19,7 +19,7 @@ function CreateEventForm({ onCancel }) {
     endTime: '', // Adding startTime and endTime fields
     limit: '',
     location: '',
-    price: '',
+    price: [],
     posterURL: '',
     qrCodeURL: '', // Field for payment QR code URL
     organizer: localStorage.getItem('user_id')?.toString() || '' // Organizer's user ID
@@ -40,6 +40,30 @@ function CreateEventForm({ onCancel }) {
   const handlePosterChange = (e) => {
     setPoster(e.target.files[0]); // Capture the selected poster file
   };
+
+  const handleAddPrice = () => {
+    setFormData((prev) => ({
+      ...prev,
+      price: [...prev.price, { label: "", value: "" }],
+    }));
+  };
+
+  const handleRemovePrice = (index) => {
+    setFormData((prev) => ({
+      ...prev,
+      price: prev.price.filter((_, i) => i !== index),
+    }));
+  };
+
+  const handlePriceChange = (index, field, value) => {
+    setFormData((prev) => {
+      const updatedPrices = prev.price.map((price, i) =>
+        i === index ? { ...price, [field]: value } : price
+      );
+      return { ...prev, price: updatedPrices };
+    });
+  };
+
 
   const validateForm = () => {
     let newErrors = {};
@@ -138,7 +162,9 @@ function CreateEventForm({ onCancel }) {
   };
 
   return (
-    <div className="container mx-auto px-4 py-8">
+    
+
+    <div className="container p-10  px-4 py-8">
       <h1 className="text-3xl font-bold mb-8">Create New Event</h1>
       <form onSubmit={handleSubmit} className="max-w-2xl mx-auto">
         <div className="mb-4">
@@ -233,19 +259,56 @@ function CreateEventForm({ onCancel }) {
           {errors.location && <p className="mt-2 text-sm text-red-600">{errors.location}</p>}
         </div>
 
+        {/* Price section ... */}
+        {/* Ticket Prices Section */}
         <div className="mb-4">
-          <label htmlFor="price" className="block text-sm font-medium text-gray-700">Ticket Price ($)</label>
-          <input
-            type="number"
-            id="price"
-            name="price"
-            value={formData.price}
-            onChange={handleChange}
-            min="0"
-            className="mt-1 block w-full rounded-md border-gray-200 border shadow-sm focus:border-purple-500 focus:ring focus:ring-purple-500 focus:ring-opacity-50"
-          />
+          <label htmlFor="prices" className="block text-sm font-medium text-gray-700">
+            Ticket Prices
+          </label>
+          <div className="space-y-4">
+            {formData.price.map((priceItem, index) => (
+              <div
+                key={index}
+                className="flex flex-wrap items-center gap-4 p-2 border rounded-md shadow-sm"
+              >
+                <input
+                  type="text"
+                  placeholder="Enter Label"
+                  value={priceItem.label}
+                  onChange={(e) => handlePriceChange(index, "label", e.target.value)}
+                  className="flex-grow p-2 rounded-md border-gray-200 border focus:border-purple-500 focus:ring focus:ring-purple-500 focus:ring-opacity-50"
+                />
+                <input
+                  type="number"
+                  placeholder="Enter Price ($)"
+                  value={priceItem.value}
+                  onChange={(e) => handlePriceChange(index, "value", e.target.value)}
+                  min="0"
+                  className="flex-grow p-2 rounded-md border-gray-200 border focus:border-purple-500 focus:ring focus:ring-purple-500 focus:ring-opacity-50"
+                />
+                <button
+                  type="button"
+                  onClick={() => handleRemovePrice(index)}
+                  className="px-3 py-2 bg-red-600 rounded-md text-white hover:bg-red-700"
+                >
+                  Remove
+                </button>
+              </div>
+            ))}
+          </div>
+          <button
+            type="button"
+            onClick={handleAddPrice}
+            className="mt-4 px-3 py-2 bg-blue-600 rounded-md text-white hover:bg-blue-700"
+          >
+            Add +
+          </button>
           {errors.price && <p className="mt-2 text-sm text-red-600">{errors.price}</p>}
         </div>
+
+
+
+        {/* ********* */}
 
         <div className="mb-4">
           <label htmlFor="poster" className="block text-sm font-medium text-gray-700">Event Poster</label>
@@ -278,6 +341,8 @@ function CreateEventForm({ onCancel }) {
         </div>
       </form>
     </div>
+
+    
   );
 }
 

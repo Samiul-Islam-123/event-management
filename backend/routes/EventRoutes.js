@@ -116,7 +116,7 @@ EventRouter.put('/poster', upload.single('poster'), async (req, res) => {
 // Create Event with Poster Image
 EventRouter.post('/', createStripeAccountMiddleware, async (req, res) => {
     const { name, description, date, limit, location, organizer, tickets, price, posterURL, startTime, endTime } = req.body;
-
+    //console.log(req.body)
     try {
         // Check if the organizer exists in the UserModel
         let existingOrganizer = await UserModel.findOne({ _id: organizer });

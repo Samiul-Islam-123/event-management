@@ -177,11 +177,33 @@ const EventsDetails = () => {
                   <h2 className="text-xl font-medium">{details.location}</h2>
                 </div>
 
-                {/* Ticket Price */}
+                {/* Ticket price */}
                 <div className="flex items-center gap-4 text-gray-600 mt-4 p-4 border rounded-lg">
                   <h2 className="text-xl">{defaultTexts.eventDetails.ticketPriceLabel}</h2>
-                  <h1 className="text-3xl font-bold text-[#E167FF]">${details.price}</h1>
+                  {Array.isArray(details.price) ? (
+                    <div className="flex flex-wrap gap-2">
+                      {details.price.map((p, index) => (
+                        // Ensure `p` is an object with `label` and `value`
+                        <p key={index} className="text-lg font-semibold text-[#E167FF]">
+                          {p && p.label && p.value ? `${p.label}: $${p.value}` : `$${p}`}
+                        </p>
+                      ))}
+                    </div>
+                  ) : (
+                    // Ensure `price` is an object with `label` and `value`
+                    details.price && details.price.label && details.price.value ? (
+                      <h1 className="text-3xl font-bold text-[#E167FF]">
+                        {details.price.label}: ${details.price.value}
+                      </h1>
+                    ) : (
+                      // Handle primitive value or malformed data
+                      <h1 className="text-3xl font-bold text-[#E167FF]">${details.price}</h1>
+                    )
+                  )}
                 </div>
+
+
+
               </div>
             </div>
 
@@ -215,14 +237,29 @@ const EventsDetails = () => {
                       <h4 className="text-lg font-medium text-gray-700">
                         {defaultTexts.eventDetails.financialOverview}
                       </h4>
+                      {/* Price Per Ticket */}
                       <p>
-                        <strong>{defaultTexts.eventDetails.pricePerTicket}</strong> ${details.price}
+                        <strong>{defaultTexts.eventDetails.pricePerTicket}</strong>{" "}
+                        {Array.isArray(details.price) ? (
+                          <span>
+                            {details.price.map((p, index) => (
+                              <span key={index}>{p.label ? `${p.label}: $${p.value}` : `$${p}`}</span>
+                            ))}
+                          </span>
+                        ) : (
+                          <span>${details.price}</span>
+                        )}
                       </p>
+
+                      {/* Total Sales */}
                       <p>
                         <strong>{defaultTexts.eventDetails.totalSales}</strong> $
-                        {details.price * details.tickets.length}
+                        {Array.isArray(details.price)
+                          ? details.price.reduce((total, p) => total + (p.value * details.tickets.length), 0)
+                          : details.price * details.tickets.length}
                       </p>
                     </div>
+
 
                     {/* Action Buttons */}
                     <div className="space-x-4 mt-6">
