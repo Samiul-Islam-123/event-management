@@ -178,15 +178,23 @@ const EventsDetails = () => {
                 </div>
 
                 {/* Ticket price */}
-                <div className="flex items-center gap-4 text-gray-600 mt-4 p-4 border rounded-lg">
-                  <h2 className="text-xl">{defaultTexts.eventDetails.ticketPriceLabel}</h2>
+                <div className="flex flex-col gap-4 text-gray-600 mt-4 p-4 border rounded-lg">
+                  <h2 className="text-xl font-medium">{defaultTexts.eventDetails.ticketPriceLabel}</h2>
+
                   {Array.isArray(details.price) ? (
-                    <div className="flex flex-wrap gap-2">
+                    <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-4">
                       {details.price.map((p, index) => (
-                        // Ensure `p` is an object with `label` and `value`
-                        <p key={index} className="text-lg font-semibold text-[#E167FF]">
-                          {p && p.label && p.value ? `${p.label}: $${p.value}` : `$${p}`}
-                        </p>
+                        <div
+                          key={index}
+                          className="flex flex-col items-start p-4 bg-gray-50 rounded-lg shadow-sm border"
+                        >
+                          {p.label && (
+                            <p className="text-sm font-medium text-gray-500">{p.label}</p>
+                          )}
+                          <p className="text-lg font-bold text-[#E167FF]">
+                            {p.value ? `$${p.value}` : 'N/A'}
+                          </p>
+                        </div>
                       ))}
                     </div>
                   ) : (
@@ -197,10 +205,11 @@ const EventsDetails = () => {
                       </h1>
                     ) : (
                       // Handle primitive value or malformed data
-                      <h1 className="text-3xl font-bold text-[#E167FF]">${details.price}</h1>
+                      <h1 className="text-3xl font-bold text-[#E167FF]">${details.price || 'N/A'}</h1>
                     )
                   )}
                 </div>
+
 
 
 
@@ -237,19 +246,35 @@ const EventsDetails = () => {
                       <h4 className="text-lg font-medium text-gray-700">
                         {defaultTexts.eventDetails.financialOverview}
                       </h4>
-                      {/* Price Per Ticket */}
-                      <p>
-                        <strong>{defaultTexts.eventDetails.pricePerTicket}</strong>{" "}
+                      {/* Price Per Ticket
+                      <div className="mt-4 p-4 border rounded-lg bg-gray-50">
+                        <p className="text-lg font-semibold text-gray-700 mb-2">
+                          {defaultTexts.eventDetails.pricePerTicket}
+                        </p>
                         {Array.isArray(details.price) ? (
-                          <span>
+                          <ul className="flex flex-wrap gap-4">
                             {details.price.map((p, index) => (
-                              <span key={index}>{p.label ? `${p.label}: $${p.value}` : `$${p}`}</span>
+                              <li
+                                key={index}
+                                className="p-3 border rounded-md bg-white shadow-sm flex flex-col items-start"
+                              >
+                                {p.label && (
+                                  <span className="text-sm text-gray-500">{p.label}</span>
+                                )}
+                                <span className="text-lg font-bold text-[#E167FF]">
+                                  {p.value ? `$${p.value}` : 'N/A'}
+                                </span>
+                              </li>
                             ))}
-                          </span>
+                          </ul>
                         ) : (
-                          <span>${details.price}</span>
+                          <div className="p-3 border rounded-md bg-white shadow-sm">
+                            <span className="text-lg font-bold text-[#E167FF]">
+                              ${details.price || 'N/A'}
+                            </span>
+                          </div>
                         )}
-                      </p>
+                      </div> */}
 
                       {/* Total Sales */}
                       <p>
