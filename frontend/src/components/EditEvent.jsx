@@ -7,19 +7,44 @@ const EditEvent = () => {
     const { eventID } = useParams();
     const navigate = useNavigate();
     const { setLoading } = useData();
-    
+
     const [formData, setFormData] = useState({
         name: '',
         description: '',
         date: '',
         location: '',
-        price: '',
+        price: [],
         limit: '',
         poster: null
     });
-    
+
     const [previewImage, setPreviewImage] = useState(null);
     const [errors, setErrors] = useState({});
+
+
+    const handleAddPrice = () => {
+        setFormData((prev) => ({
+            ...prev,
+            price: [...prev.price, { label: "", value: "" }],
+        }));
+    };
+
+    const handleRemovePrice = (index) => {
+        setFormData((prev) => ({
+            ...prev,
+            price: prev.price.filter((_, i) => i !== index),
+        }));
+    };
+
+    const handlePriceChange = (index, field, value) => {
+        setFormData((prev) => {
+            const updatedPrices = prev.price.map((price, i) =>
+                i === index ? { ...price, [field]: value } : price
+            );
+            return { ...prev, price: updatedPrices };
+        });
+    };
+
 
     // Fetch current event data
     const fetchEventDetails = async () => {
@@ -56,16 +81,20 @@ const EditEvent = () => {
 
     const handleInputChange = (e) => {
         const { name, value } = e.target;
-        setFormData(prev => ({
-            ...prev,
-            [name]: value
-        }));
+
+        // Special handling for price to ensure valid input
+        if (name === 'price') {
+            const price = parseFloat(value);
+            if (price >= 0 || value === '') {
+                setFormData(prev => ({ ...prev, [name]: value }));
+            }
+        } else {
+            setFormData(prev => ({ ...prev, [name]: value }));
+        }
+
         // Clear error when user starts typing
         if (errors[name]) {
-            setErrors(prev => ({
-                ...prev,
-                [name]: ''
-            }));
+            setErrors(prev => ({ ...prev, [name]: '' }));
         }
     };
 
@@ -88,18 +117,18 @@ const EditEvent = () => {
         if (!formData.location.trim()) newErrors.location = 'Location is required';
         if (!formData.price || formData.price <= 0) newErrors.price = 'Valid price is required';
         if (!formData.limit || formData.limit <= 0) newErrors.limit = 'Valid ticket limit is required';
-        
+
         setErrors(newErrors);
         return Object.keys(newErrors).length === 0;
     };
 
     const handleSubmit = async (e) => {
         e.preventDefault();
-    
+
         if (!validateForm()) return;
-    
+
         setLoading(true);
-    
+
         try {
             // Create FormData to handle both the poster and other fields
             const formDataToSend = new FormData();
@@ -107,14 +136,14 @@ const EditEvent = () => {
             formDataToSend.append('description', formData.description);
             formDataToSend.append('date', formData.date);
             formDataToSend.append('location', formData.location);
-            formDataToSend.append('price', formData.price);
+            formDataToSend.append('price', JSON.stringify(formData.price));
             formDataToSend.append('limit', formData.limit);
             formDataToSend.append('oldImageUrl', previewImage); // Pass the current poster URL as oldImageUrl
-    
+
             if (formData.poster) {
                 formDataToSend.append('poster', formData.poster); // Add the new poster file if uploaded
             }
-    
+
             // Send the PUT request
             const response = await axios.put(
                 `${import.meta.env.VITE_API_URL}/event/${eventID}`,
@@ -125,7 +154,7 @@ const EditEvent = () => {
                     },
                 }
             );
-    
+
             if (response.data.success) {
                 alert('Event updated successfully!');
                 navigate(`/app/eventDetails/${eventID}`);
@@ -136,26 +165,24 @@ const EditEvent = () => {
             console.error('Error updating event:', error);
             alert('Failed to update event');
         }
-    
+
         setLoading(false);
     };
-    
-    
 
     return (
         <div className="min-h-screen bg-gray-50 py-12 px-4 sm:px-6 lg:px-8">
             <div className="max-w-3xl mx-auto">
                 <h1 className="text-3xl font-semibold text-gray-900 mb-8">Edit Event</h1>
-                
+
                 <form onSubmit={handleSubmit} className="space-y-6">
                     {/* Event Image */}
                     <div>
                         <label className="block text-sm font-medium text-gray-700">Event Poster</label>
                         <div className="mt-2">
                             {previewImage && (
-                                <img 
-                                    src={previewImage} 
-                                    alt="Event preview" 
+                                <img
+                                    src={previewImage}
+                                    alt="Event preview"
                                     className="mb-4 w-full h-64 object-cover rounded-lg"
                                 />
                             )}
@@ -223,19 +250,55 @@ const EditEvent = () => {
 
                     {/* Price and Ticket Limit */}
                     <div className="grid grid-cols-1 gap-6 sm:grid-cols-2">
-                        <div>
-                            <label className="block text-sm font-medium text-gray-700">Price ($)</label>
-                            <input
-                                type="number"
-                                name="price"
-                                value={formData.price}
-                                onChange={handleInputChange}
-                                min="0"
-                                step="0.01"
-                                className={`mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500 ${errors.price ? 'border-red-500' : ''}`}
-                            />
-                            {errors.price && <p className="text-red-500 text-sm mt-1">{errors.price}</p>}
+                        
+                        <div className="mb-4">
+                            <label htmlFor="prices" className="block text-sm font-medium text-gray-700">
+                                Ticket Prices
+                            </label>
+                            <div className="space-y-4">
+                                {formData.price.map((priceItem, index) => (
+                                    <div
+                                        key={index}
+                                        className="flex flex-wrap items-center gap-4 p-2 border rounded-md shadow-sm"
+                                    >
+                                        <input
+                                            type="text"
+                                            placeholder="Enter Label"
+                                            value={priceItem.label}
+                                            onChange={(e) => handlePriceChange(index, "label", e.target.value)}
+                                            className="flex-grow p-2 rounded-md border-gray-200 border focus:border-purple-500 focus:ring focus:ring-purple-500 focus:ring-opacity-50"
+                                        />
+                                        <input
+                                            type="number"
+                                            placeholder="Enter Price ($)"
+                                            value={priceItem.value}
+                                            onChange={(e) => handlePriceChange(index, "value", e.target.value)}
+                                            min="0"
+                                            className="flex-grow p-2 rounded-md border-gray-200 border focus:border-purple-500 focus:ring focus:ring-purple-500 focus:ring-opacity-50"
+                                        />
+                                        <button
+                                            type="button"
+                                            onClick={() => handleRemovePrice(index)}
+                                            className="px-3 py-2 bg-red-600 rounded-md text-white hover:bg-red-700"
+                                        >
+                                            Remove
+                                        </button>
+                                    </div>
+                                ))}
+                            </div>
+                            <button
+                                type="button"
+                                onClick={handleAddPrice}
+                                className="mt-4 px-3 py-2 bg-blue-600 rounded-md text-white hover:bg-blue-700"
+                            >
+                                Add +
+                            </button>
+                            {errors.price && <p className="mt-2 text-sm text-red-600">{errors.price}</p>}
                         </div>
+
+
+
+                        {/* ********* */}
 
                         <div>
                             <label className="block text-sm font-medium text-gray-700">Ticket Limit</label>
@@ -261,7 +324,6 @@ const EditEvent = () => {
                             Cancel
                         </button>
                         <button
-                       
                             type="submit"
                             className="bg-blue-500 text-white px-4 py-2 rounded-md hover:bg-blue-600"
                         >

@@ -271,8 +271,9 @@ EventRouter.get('/', async (req, res) => {
 // Update Event by ID
 EventRouter.put('/:id', upload.single('poster'), async (req, res) => {
     const { id } = req.params;
-    const { oldImageUrl, name, description, date, limit, location, organizer, tickets } = req.body;
-
+    const { oldImageUrl, price, name, description, date, limit, location, organizer, tickets } = req.body;
+     // Parse price if it is received as a JSON string
+     const parsedPrice = typeof price === 'string' ? JSON.parse(price) : price;
     if (!id) {
         return res.json({
             success: false,
@@ -319,9 +320,10 @@ EventRouter.put('/:id', upload.single('poster'), async (req, res) => {
         // Update the event in the database
         const updatedEvent = await EventModel.findByIdAndUpdate(
             id,
-            { name, description, date, limit, location, organizer, tickets, poster: newPosterUrl },
+            { name, description, date, limit, location, organizer, price: parsedPrice, tickets, poster: newPosterUrl },
             { new: true, runValidators: true }
         ).populate('organizer').populate('tickets');
+
 
         if (updatedEvent) {
             res.json({

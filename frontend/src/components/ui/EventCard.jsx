@@ -78,7 +78,9 @@ const EventCard = ({ _id, name, description, date, organizer, price, poster, loc
                         {defaultTexts.eventCard.organizedBy} <br /> <span className="text-[#E167FF]">{organizer.username}</span>
                     </p>
 
-                    {Array.isArray(price) ? (<>Is array</>) : (<><p className="text-2xl font-semibold text-[#E167FF]">
+                    {Array.isArray(price) ? (<p className="text-2xl font-semibold text-[#E167FF]">
+                        ${price[0].value}
+                    </p>) : (<><p className="text-2xl font-semibold text-[#E167FF]">
                         ${price}
                     </p></>)}
 
