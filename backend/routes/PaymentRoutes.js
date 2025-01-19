@@ -198,7 +198,7 @@ PaymentRouter.post('/create-stripe-account', async (req, res) => {
   }
   catch (error) {
     console.error('Error creating Stripe account:', error);
-    res.status(500).json({
+    res.json({
       success: false,
       message: 'Error creating Stripe account.',
       error: error.message

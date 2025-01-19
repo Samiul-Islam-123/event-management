@@ -110,7 +110,7 @@ function ProfilePage() {
 
                 else
                 {
-                  alert(response.data.message)
+                  alert(res.data.error)
                   console.log(response)
                 }
                 setLoading(false)

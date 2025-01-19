@@ -4,7 +4,8 @@
     "menuItems": [
       "Home",
       "Events",
-      "Contact"
+      "Contact",
+      "Become Organizer"
     ],
     "events": {
       "title": "Events",

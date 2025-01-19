@@ -17,7 +17,7 @@ const Nav = () => {
     const navigate = useNavigate();
     const navRef = useRef(null);
     const [isMenuOpen, setIsMenuOpen] = useState(false);
-    const { defaultTexts, setDefaultTexts, language, setLanguage } = useData();
+    const { defaultTexts, setDefaultTexts, language, setLanguage, isOrganizer } = useData();
 
 
     useEffect(() => {
@@ -46,7 +46,7 @@ const Nav = () => {
                 <h2>{defaultTexts.nav.logo}</h2>
             </div>
 
-            
+
 
             {/* Overlay for Dark Background when Menu is Open */}
             {isMenuOpen && (
@@ -132,13 +132,23 @@ const Nav = () => {
                     navigate('/contact-us')
                 }}>{defaultTexts.nav.menuItems[2]}</li>
 
+                {
+                    isOrganizer && (<>
+                        <li style={{
+                            cursor: "pointer"
+                        }} onClick={() => {
+                            navigate('/app/profile')
+                        }}>{defaultTexts.nav.menuItems[3]}</li>
+                    </>)
+                }
+
                 {/* <li style={{
                     cursor: "pointer"
                 }} onClick={() => {
                     language === 'en' ? setLanguage('fr') : setLanguage('en')
                 }}>Switch to {language === 'en' ? "French" : "English"} </li> */}
 
-                
+
             </ul>
 
             <div className=" flex gap-5">
@@ -149,7 +159,7 @@ const Nav = () => {
 
                 <div className=""><LanguageDropdown /></div>
 
-                
+
 
                 {/* Hamburger Icon for Mobile */}
                 <button className="md:hidden text-white text-3xl" onClick={toggleMenu}>
@@ -157,11 +167,11 @@ const Nav = () => {
                 </button>
                 {/* Profile Icon for Desktop */}
                 <div className="profile h-10 w-10 rounded-full bg-black/40 hidden md:flex items-center justify-center" >
-                {isSignedIn ? (
-                    <CustomUserButton />
-                ) : (
-                    <a href="/login"><FaUserAlt /></a>
-                )}
+                    {isSignedIn ? (
+                        <CustomUserButton />
+                    ) : (
+                        <a href="/login"><FaUserAlt /></a>
+                    )}
                 </div>
             </div>
         </nav>

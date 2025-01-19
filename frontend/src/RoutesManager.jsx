@@ -20,11 +20,12 @@ import ContactPage from './pages/public/ContactPage';
 import EditEvent from './components/EditEvent';
 import AdminRouteGuard from './pages/private/AdminRouteGuard';
 import AdminPanel from './pages/private/AdminPanel';
+import { useData } from './context/DataContext';
 
 function RoutesManager() {
   const { isSignedIn, isLoaded, user } = useUser(); // Get the user object for additional info
   const [loading, setLoading] = useState(true);
-
+  const {isOrganizer, setIsOrganizer} = useData();
   useEffect(() => {
     if (isLoaded) {
       setLoading(false);
@@ -52,6 +53,7 @@ function RoutesManager() {
         alert('User does not exist, sending user data to server...'); // Alert before sending data
         sendUserDataToServer(user);
       } else {
+        setIsOrganizer(!(response.data.user.isOrganizer));
         localStorage.setItem('user_id',response.data.user._id)
         Cookies.set('user_id', response.data.user._id)
         console.log('User already exists, no need to save:', response.data.user);

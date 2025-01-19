@@ -18,6 +18,7 @@ export function DataProvider({ children }) {
 
   const [dynamicData, setDynamicData] = useState({});
   const [loading, setLoading] = useState(false)
+  const [isOrganizer, setIsOrganizer] = useState(false);
 
 
   const [language, setLanguage] = useState('en');
@@ -168,7 +169,9 @@ export function DataProvider({ children }) {
         addEventData,
         language,
         setLanguage,
-        setLoading
+        setLoading,
+        isOrganizer,
+        setIsOrganizer
       }}
     >
       {loading ? <FullScreenLoader /> : (<></>)}
