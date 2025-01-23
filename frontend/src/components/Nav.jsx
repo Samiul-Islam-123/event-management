@@ -101,6 +101,15 @@ const Nav = () => {
                         setIsMenuOpen(false)
                         navigate('/contact-us')
                     }}>{defaultTexts.nav.menuItems[2]}</li>
+                    {
+                    !isOrganizer && (<>
+                        <li style={{
+                            cursor: "pointer"
+                        }} onClick={() => {
+                            navigate('/app/profile')
+                        }}>{defaultTexts.nav.menuItems[3]}</li>
+                    </>)
+                }
                 </ul>
             </div>
 
