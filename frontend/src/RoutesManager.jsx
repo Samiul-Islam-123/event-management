@@ -41,19 +41,21 @@ function RoutesManager() {
 
   const checkIfUserExists = async (user) => {
       //console.log(`${import.meta.env.VITE_API_URL}/user/check`);
-      console.log(user.emailAddresses[0].emailAddress)
+      //console.log(user.emailAddresses[0].emailAddress)
     try {
       const response = await axios.post(`${import.meta.env.VITE_API_URL}/user/check`, {
         email: user.emailAddresses[0].emailAddress, // Adjust based on your user object structure
       });
       console.log(response.data);
-
+      //alert(!(response.data.exists === true))
       if (!(response.data.exists === true)) {
         // If the user does not exist, send their data to the server
         alert('User does not exist, sending user data to server...'); // Alert before sending data
         sendUserDataToServer(user);
       } else {
-        setIsOrganizer(!(response.data.user.isOrganizer));
+        //alert(!response.data.user.isOrganizer)
+        //alert(!(response.data.user.isOrganizer))
+        //setIsOrganizer(!(response.data.user.isOrganizer));
         localStorage.setItem('user_id',response.data.user._id)
         Cookies.set('user_id', response.data.user._id)
         console.log('User already exists, no need to save:', response.data.user);
@@ -63,6 +65,12 @@ function RoutesManager() {
       alert('Error checking user existence.'); // Alert on error
     }
   };
+
+  
+
+  // useEffect(()=>{
+  //   checkIfUserExists(user)
+  // },[])
 
   const sendUserDataToServer = async (user) => {
     console.log("saving data...");

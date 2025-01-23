@@ -133,7 +133,7 @@ const Nav = () => {
                 }}>{defaultTexts.nav.menuItems[2]}</li>
 
                 {
-                    isOrganizer && (<>
+                    !isOrganizer && (<>
                         <li style={{
                             cursor: "pointer"
                         }} onClick={() => {
