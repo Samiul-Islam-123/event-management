@@ -97,19 +97,22 @@ const Nav = () => {
                         setIsMenuOpen(false)
                         navigate('/app/events')
                     }}>{defaultTexts.nav.menuItems[1]}</li>
+
+{
+                        !isOrganizer && (<>
+                            <li style={{
+                                cursor: "pointer"
+                            }} onClick={() => {
+                                navigate('/app/profile')
+                            }}>{defaultTexts.nav.menuItems[3]}</li>
+                        </>)
+                    }
+
                     <li className="cursor-pointer" onClick={() => {
                         setIsMenuOpen(false)
                         navigate('/contact-us')
                     }}>{defaultTexts.nav.menuItems[2]}</li>
-                    {
-                    !isOrganizer && (<>
-                        <li style={{
-                            cursor: "pointer"
-                        }} onClick={() => {
-                            navigate('/app/profile')
-                        }}>{defaultTexts.nav.menuItems[3]}</li>
-                    </>)
-                }
+                    
                 </ul>
             </div>
 
@@ -135,11 +138,6 @@ const Nav = () => {
                 }} onClick={() => {
                     navigate('/app/events')
                 }}>{defaultTexts.nav.menuItems[1]}</li>
-                <li style={{
-                    cursor: "pointer"
-                }} onClick={() => {
-                    navigate('/contact-us')
-                }}>{defaultTexts.nav.menuItems[2]}</li>
 
                 {
                     !isOrganizer && (<>
@@ -150,6 +148,14 @@ const Nav = () => {
                         }}>{defaultTexts.nav.menuItems[3]}</li>
                     </>)
                 }
+
+                <li style={{
+                    cursor: "pointer"
+                }} onClick={() => {
+                    navigate('/contact-us')
+                }}>{defaultTexts.nav.menuItems[2]}</li>
+
+
 
                 {/* <li style={{
                     cursor: "pointer"
